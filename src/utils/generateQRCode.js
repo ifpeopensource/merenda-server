@@ -1,6 +1,6 @@
 import qrcode from 'qrcode';
 
-export async function generatingQRCode(studentId) {
+export async function generateStudentQRCode(studentId) {
     const qrCode = await qrcode.toDataURL(studentId,  { 
         errorCorrectionLevel: 'H', 
         width: 256, 
