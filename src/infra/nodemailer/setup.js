@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-import { generatingQRCode } from '../../utils/generateQRCode.js';
+import { generateStudentQRCode } from '../../utils/generateQRCode.js';
 
 
 const transporter = nodemailer.createTransport({
@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendEmail(studentData) {
 
-  const QRCode = await generatingQRCode();
+  const QRCode = await generateStudentQRCode();
 
   const message = {
     from: process.env.EMAIL_USER, 
