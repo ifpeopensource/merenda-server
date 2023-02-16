@@ -1,42 +1,41 @@
 import nodemailer from 'nodemailer';
-import crypto from 'crypto';
-import qrcode from 'qrcode';
+import * as dotenv from 'dotenv';
+import { generatingQRCode } from '../../utils/generateQRCode.js';
 
-// Function criada para poder ser acessada pelo UserController
-export async function sendEmail() {
-    // Gerando um "codigo" aleatório usando o crypto do próprio Node
-    const code = crypto.randomBytes(8).toString('hex');
+dotenv.config();
 
-    // Gerando o QRCode tendo como conteúdo o código
-    const qrCode = await qrcode.toDataURL(code,  { errorCorrectionLevel: 'H', width: 256, color: { dark: '#000000', light: '#ffffff' }});
+let transporter = nodemailer.createTransport({
+  host: process.env.email_host,
+  port: process.env.email_port,
+  secure: false,
+  service: process.env.email_service,
+  auth: {
+    user: process.env.email_user,
+    pass: process.env.email_pass
+  }
+});
 
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: '',
-            pass: '' // <- OBS: Precisa ser uma SENHA DE APLICATIVO do gmail, por conta da verificação de duas etapas.
-        }
-    })
+export async function sendEmail(studentData) {
 
-    // Aqui definimos quem irá receber (o aluno) e quem irá enviar (nós)
-    let emailInformations = {
-        from: '', 
-        to: '',
-        subject: 'QRCode de Acesso',
-        html: `<p>Este é o seu QRCode de acesso:</p><img src="cid:qr-code-cid" alt="QR code">`,
-        attachments: [{
-          filename: 'qrcode.png',
-          path: `${qrCode}`,
-          cid: 'qr-code-cid'
-        }]
-    }  
+  const QRCode = await generatingQRCode();
 
-    // E-mail enviado, caso dê errado irá falar o erro, caso não, irá enviar
-    transporter.sendMail(emailInformations, (error) => {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('IFOS - E-mail enviado para: ' + emailInformations.to);
-        }
-      });
+  var message = {
+    from: process.env.email_user, 
+    to: studentData.email,
+    subject: 'QRCode de Acesso',
+    html: `<p>Este é o seu QRCode de acesso:</p><img src="cid:qr-code-cid" alt="QR code">`,
+    attachments: [{
+      filename: 'qrcode.png',
+      path: `${QRCode}`,
+      cid: 'qr-code-cid'
+    }]
+  };
+
+  transporter.sendMail(message, (error) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('IFOS - E-mail enviado para: ' + message.to);
+    }
+  });
 }
