@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-import { generateStudentQRCode } from '../../utils/generateQRCode.js';
+import { generateStudentQRCode } from '../../utils/generateStudentQRCode.js';
 
 
 const transporter = nodemailer.createTransport({
