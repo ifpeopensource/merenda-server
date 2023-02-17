@@ -22,4 +22,4 @@ async function sendEmail(message, studentData) {
   });
 }
 
-export default { sendEmail };
+export default { sendEmail }; 
