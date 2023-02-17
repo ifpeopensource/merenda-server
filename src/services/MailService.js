@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-import { generateStudentQRCode } from '../../utils/generateStudentQRCode.js';
+import { generateStudentQRCode } from '../utils/generateStudentQRCode.js';
 
 
 const transporter = nodemailer.createTransport({
@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-export async function sendEmail(studentData) {
+async function sendEmail(studentData) {
 
   const QRCode = await generateStudentQRCode();
 
@@ -38,4 +38,7 @@ export async function sendEmail(studentData) {
       console.log('IFOS - E-mail enviado para: ' + message.to);
     }
   });
-} 
+}
+
+export default { sendEmail };
+
