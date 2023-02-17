@@ -38,7 +38,6 @@ async function sendEmail(studentData) {
       console.log('IFOS - E-mail enviado para: ' + message.to);
     }
   });
-}
+} 
 
 export default { sendEmail };
-
