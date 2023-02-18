@@ -42,4 +42,5 @@ export async function generateStudentQRCode(studentId, base64Image) {
   );
 
   return canvas.toDataURL();
+
 }
