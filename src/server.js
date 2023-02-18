@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -19,5 +22,5 @@ app.use(studentsRoute);
 app.use(usersRoute);
 
 app.listen(3000, () => {
-    console.log('Server is running on port 3000');
+  console.log('Server is running on port 3000');
 });
