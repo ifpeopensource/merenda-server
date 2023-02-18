@@ -13,14 +13,14 @@ const transporter = nodemailer.createTransport({
 
 
 async function sendEmail(message) {
-    transporter.sendMail(message, (error) => {
-        if (error) {
-            console.log(`E-mail não enviado, erro: ${error}`);
-            throw error;
-        } else {
-            console.log('IFOS - E-mail enviado para: ' + message.to);
-        }
-    });
+  transporter.sendMail(message, (error) => {
+    if (error) {
+      console.log(`E-mail não enviado, erro: ${error}`);
+      throw error;
+    } else {
+      console.log("IFOS - E-mail enviado para: " + message.to);
+    }
+  });
 
 }
 
