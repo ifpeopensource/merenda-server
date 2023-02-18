@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 
-const UserMiddleware = (_request, response, next) => {
+const StudentMiddleware = (_request, response, next) => {
     const authHeader = _request.headers.authorization;
 
     if (!authHeader) {
@@ -20,14 +20,9 @@ const UserMiddleware = (_request, response, next) => {
         }
 
         _request.userid = decoded.id;
-        
-        if (decoded.role != 'ADMIN') {
-            response.sendStatus(403);
-            return;
-        }
-
+        _request.role = decoded.role;
         next();
     });
 };
 
-export default UserMiddleware;
+export default StudentMiddleware;
