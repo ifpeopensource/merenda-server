@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function sendEmail(message, studentData) {
+async function sendEmail(message) {
   transporter.sendMail(message, (error) => {
     if (error) {
       console.log(`E-mail não enviado, erro: ${error}`);
