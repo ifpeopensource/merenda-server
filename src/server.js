@@ -1,6 +1,3 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
-
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -8,7 +5,6 @@ import dotenv from 'dotenv';
 import oauthRoute from './routes/oauth.js';
 import studentsRoute from './routes/students.js';
 import usersRoute from './routes/users.js';
-
 
 dotenv.config();
 

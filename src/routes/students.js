@@ -4,7 +4,6 @@ import StudentController from '../controllers/StudentController.js';
 
 import StudentMiddleware from '../middlewares/StudentMiddleware.js';
 
-
 const routes = express.Router();
 
 routes.use(StudentMiddleware);

@@ -4,7 +4,6 @@ import UserController from '../controllers/UserController.js';
 
 import UserMiddleware from '../middlewares/UserMiddleware.js';
 
-
 const routes = express.Router();
 
 routes.use(UserMiddleware);
