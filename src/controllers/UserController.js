@@ -20,16 +20,13 @@ async function add(_request, response) {
   let { role } = _request.body;
 
   if (!emailSchema.safeParse(email).success) {
-    response.status(400).json({ error: 'Malformed Email!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Email!' });
   }
   if (!nameSchema.safeParse(name).success) {
-    response.status(400).json({ error: 'Malformed Name!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Name!' });
   }
   if (!passSchema.safeParse(plain_password).success) {
-    response.status(400).json({ error: 'Malformed Password!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Password!' });
   }
   if (!roleSchema.safeParse(role).success) {
     role = 'VERIFIER';
@@ -39,36 +36,36 @@ async function add(_request, response) {
 
   const data = { name, password, email, role };
 
-  await UserService.add(data)
-    .then((user) => {
-      response.status(201).json(user);
-    })
-    .catch((err) => {
-      if (err.code == 'P2002') {
-        response.status(204).send();
-      } else {
-        response.status(500).json({ error: err.message, code: err.code });
-      }
-    });
+  try {
+    const user = await UserService.add(data);
+    return response.status(201).json(user);
+  } catch (error) {
+    if (error.code == 'P2002') {
+      return response.status(204).send();
+    } else {
+      return response
+        .status(500)
+        .json({ error: error.message, code: error.code });
+    }
+  }
 }
 
 async function read(_request, response) {
   const emailSchema = z.string().email();
 
   if (!emailSchema.safeParse(_request.query.email).success) {
-    response.status(400).json({ error: 'Malformed Email!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Email!' });
   }
 
   const email = _request.query.email;
 
-  await UserService.read(email).then((user) => {
-    if (user) {
-      response.json({ data: user });
-    } else {
-      response.sendStatus(404);
-    }
-  });
+  const user = await UserService.read(email);
+
+  if (user) {
+    return response.json({ data: user });
+  } else {
+    return response.sendStatus(404);
+  }
 }
 
 async function update(_request, response) {
@@ -86,16 +83,13 @@ async function update(_request, response) {
   let data = {};
 
   if (!emailSchema.safeParse(email).success) {
-    response.status(400).json({ error: 'Malformed Email!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Email!' });
   }
   if (!nameSchema.safeParse(name).success) {
-    response.status(400).json({ error: 'Malformed Email!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Email!' });
   }
   if (!passSchema.safeParse(plain_password).success) {
-    response.status(400).json({ error: 'Malformed Password!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Password!' });
   }
 
   const password = await bcrypt.hash(plain_password, 10);
@@ -106,13 +100,12 @@ async function update(_request, response) {
     data = { name: name, password: password };
   }
 
-  await UserService.update(email, data)
-    .then((user) => {
-      response.json(user);
-    })
-    .catch(() => {
-      response.sendStatus(404);
-    });
+  try {
+    const user = await UserService.update(email, data);
+    return response.json(user);
+  } catch (error) {
+    return response.sendStatus(404);
+  }
 }
 
 async function del(_request, response) {
@@ -121,17 +114,15 @@ async function del(_request, response) {
   const email = _request.query.email;
 
   if (!emailSchema.safeParse(email).success) {
-    response.status(400).json({ error: 'Malformed Email!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Email!' });
   }
 
-  await UserService.del(email)
-    .then(() => {
-      response.status(204).send();
-    })
-    .catch(() => {
-      response.sendStatus(404);
-    });
+  try {
+    await UserService.del(email);
+    return response.status(204).send();
+  } catch (error) {
+    return response.sendStatus(404);
+  }
 }
 
 export default { add, read, update, del };

@@ -8,29 +8,26 @@ async function login(_request, response) {
   const emailSchema = z.string().email();
 
   if (!emailSchema.safeParse(_request.body.email).success) {
-    response.status(400).json({ error: 'Invalid Email Format!' });
-    return;
+    return response.status(400).json({ error: 'Invalid Email Format!' });
   }
 
   const user = await UserService.read(_request.body.email);
 
   if (!user) {
-    response.status(401).json({ error: 'Invalid Credentials!' });
-    return;
+    return response.status(401).json({ error: 'Invalid Credentials!' });
   }
 
   const { password } = _request.body;
 
-  await OauthService.createToken(password, user)
-    .then((token) => {
-      response
-        .set({ 'Cache-Control': 'no-store' })
-        .status(200)
-        .json({ access_token: token, token_type: 'Bearer' });
-    })
-    .catch((err) => {
-      response.status(401).json({ error: err.message });
-    });
+  try {
+    const token = await OauthService.createToken(password, user);
+    return response
+      .set({ 'Cache-Control': 'no-store' })
+      .status(200)
+      .json({ access_token: token, token_type: 'Bearer' });
+  } catch (error) {
+    return response.status(401).json({ error: error.message });
+  }
 }
 
 export default { login };

@@ -4,23 +4,20 @@ import { z } from 'zod';
 
 async function list(_request, response) {
   if (_request.role == 'STUDENT') {
-    response.sendStatus(403);
-    return;
+    return response.sendStatus(403);
   }
 
-  await StudentService.findAll()
-    .then((students) => {
-      response.json(students);
-    })
-    .catch((err) => {
-      response.status(500).json({ error: err });
-    });
+  try {
+    const students = await StudentService.findAll();
+    return response.json(students);
+  } catch (error) {
+    return response.status(500).json({ error: error });
+  }
 }
 
 async function add(_request, response) {
   if (_request.role != 'ADMIN') {
-    response.sendStatus(403);
-    return;
+    return response.sendStatus(403);
   }
 
   const idSchema = z
@@ -35,41 +32,37 @@ async function add(_request, response) {
   const { id, name, email, picUrl } = _request.body;
 
   if (!idSchema.safeParse(id).success) {
-    response.status(400).json({ error: 'Malformed ID!' });
-    return;
+    return response.status(400).json({ error: 'Malformed ID!' });
   }
   if (!emailSchema.safeParse(email).success) {
-    response.status(400).json({ error: 'Malformed Email!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Email!' });
   }
   if (!picSchema.safeParse(picUrl).success) {
-    response.status(400).json({ error: 'Malformed PicUrl!' });
-    return;
+    return response.status(400).json({ error: 'Malformed PicUrl!' });
   }
   if (!nameSchema.safeParse(name).success) {
-    response.status(400).json({ error: 'Malformed Name!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Name!' });
   }
 
   const data = { id: id, name: name, email: email, picUrl: picUrl };
 
-  await StudentService.add(data)
-    .then((student) => {
-      response.status(201).json(student);
-    })
-    .catch((err) => {
-      if (err.code == 'P2002') {
-        response.status(204).send();
-      } else {
-        response.status(500).json({ error: err.message, code: err.code });
-      }
-    });
+  try {
+    const student = await StudentService.add(data);
+    return response.status(201).json(student);
+  } catch (error) {
+    if (error.code == 'P2002') {
+      return response.status(204).send();
+    } else {
+      return response
+        .status(500)
+        .json({ error: error.message, code: error.code });
+    }
+  }
 }
 
 async function read(_request, response) {
   if (_request.role == 'STUDENT') {
-    response.sendStatus(403);
-    return;
+    return response.sendStatus(403);
   }
 
   const emailSchema = z.string().email();
@@ -88,23 +81,21 @@ async function read(_request, response) {
   } else if (emailSchema.safeParse(query).success) {
     type = 1;
   } else {
-    response.status(400).json({ error: 'Malformed Query!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Query!' });
   }
 
-  await StudentService.read(query, type).then((student) => {
-    if (student) {
-      response.json({ data: student });
-    } else {
-      response.sendStatus(404);
-    }
-  });
+  const student = await StudentService.read(query, type);
+
+  if (student) {
+    return response.json({ data: student });
+  } else {
+    return response.sendStatus(404);
+  }
 }
 
 async function update(_request, response) {
   if (_request.role != 'ADMIN') {
-    response.sendStatus(403);
-    return;
+    return response.sendStatus(403);
   }
 
   const idSchema = z
@@ -119,37 +110,31 @@ async function update(_request, response) {
   const { id, email, picUrl, name } = _request.body;
 
   if (!idSchema.safeParse(id).success) {
-    response.status(400).json({ error: 'Malformed ID!' });
-    return;
+    return response.status(400).json({ error: 'Malformed ID!' });
   }
   if (!emailSchema.safeParse(email).success) {
-    response.status(400).json({ error: 'Malformed Email!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Email!' });
   }
   if (!picSchema.safeParse(picUrl).success) {
-    response.status(400).json({ error: 'Malformed PicUrl!' });
-    return;
+    return response.status(400).json({ error: 'Malformed PicUrl!' });
   }
   if (!nameSchema.safeParse(name).success) {
-    response.status(400).json({ error: 'Malformed Name!' });
-    return;
+    return response.status(400).json({ error: 'Malformed Name!' });
   }
 
   const data = { name: name, email: email, picUrl: picUrl };
 
-  await StudentService.update(id, data)
-    .then((student) => {
-      response.json(student);
-    })
-    .catch(() => {
-      response.sendStatus(404);
-    });
+  try {
+    const student = await StudentService.update(id, data);
+    return response.json(student);
+  } catch (error) {
+    return response.sendStatus(404);
+  }
 }
 
 async function del(_request, response) {
   if (_request.role != 'ADMIN') {
-    response.sendStatus(403);
-    return;
+    return response.sendStatus(403);
   }
 
   const idSchema = z
@@ -161,17 +146,15 @@ async function del(_request, response) {
   const id = _request.query.id;
 
   if (!idSchema.safeParse(id).success) {
-    response.status(400).json({ error: 'Malformed ID!' });
-    return;
+    return response.status(400).json({ error: 'Malformed ID!' });
   }
 
-  await StudentService.del(id)
-    .then(() => {
-      response.status(204).send();
-    })
-    .catch(() => {
-      response.sendStatus(404);
-    });
+  try {
+    await StudentService.del(id);
+    return response.status(204).send();
+  } catch (error) {
+    return response.sendStatus(404);
+  }
 }
 
 export default { list, add, read, update, del };

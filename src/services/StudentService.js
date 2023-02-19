@@ -3,18 +3,15 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function findAll() {
-  return await prisma.student.findMany();
+  const students = await prisma.student.findMany();
+
+  return students;
 }
 
 async function add(data) {
-  const student = await prisma.student
-    .create({
-      data: data,
-    })
-    .then((student) => {
-      console.log('New Student Added:');
-      console.log(student);
-    });
+  const student = await prisma.student.create({
+    data: data,
+  });
 
   return student;
 }
@@ -40,28 +37,22 @@ async function read(query, type) {
 }
 
 async function update(id, data) {
-  return await prisma.student.update({
+  const student = await prisma.student.update({
     where: {
       id: id,
     },
     data: data,
   });
+
+  return student;
 }
 
 async function del(id) {
-  await prisma.student
-    .delete({
-      where: {
-        id: id,
-      },
-    })
-    .then((student) => {
-      console.log('Deleted Student:');
-      console.log(student);
-    })
-    .catch(() => {
-      throw new Error('Unable to find register!');
-    });
+  await prisma.student.delete({
+    where: {
+      id: id,
+    },
+  });
 }
 
 export default { findAll, add, read, update, del };
