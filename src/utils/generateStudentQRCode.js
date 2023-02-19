@@ -1,4 +1,5 @@
 import qrcode from 'qrcode';
+
 import { createCanvas, loadImage } from 'canvas';
 
 export async function generateStudentQRCode(studentId, base64Image) {
@@ -27,20 +28,25 @@ export async function generateStudentQRCode(studentId, base64Image) {
     qrCodeOptions.width
   );
 
-  const centerX = qrCodeOptions.width / 2;
-  const centerY = qrCodeOptions.width / 2;
-  const rectangleWidth = base64ImageDimensions.width * 1.0;
-  const rectangleHeight = base64ImageDimensions.height * 1.0;
-  const rectangleX = centerX - rectangleWidth / 2;
-  const rectangleY = centerY - rectangleHeight / 2;
+  const centerCoords = {
+    x: qrCodeOptions.width / 2,
+    y: qrCodeOptions.width / 2
+  };
+  
+  const rectangleCoords = {
+    width: base64ImageDimensions.width * 1.0,
+    height: base64ImageDimensions.height * 1.0,
+    x: centerCoords.x - (base64ImageDimensions.width * 1.0) / 2,
+    y: centerCoords.y - (base64ImageDimensions.height * 1.0) / 2,
+  };
 
   context.fillStyle = '#FFFFFF';
   context.fillRect(rectangleX, rectangleY, rectangleWidth, rectangleHeight);
 
   context.drawImage(
     base64ImageCanvasElement,
-    rectangleX + (rectangleWidth - base64ImageDimensions.width) / 2,
-    rectangleY + (rectangleHeight - base64ImageDimensions.height) / 2,
+    rectangleCoords.x + (rectangleCoords.width - base64ImageDimensions.width) / 2,
+    rectangleCoords.y + (rectangleCoords.height - base64ImageDimensions.height) / 2,
     base64ImageDimensions.width,
     base64ImageDimensions.height
   );
