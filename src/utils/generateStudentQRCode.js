@@ -44,7 +44,12 @@ export async function generateStudentQRCode(studentId, base64Image) {
   };
 
   context.fillStyle = '#FFFFFF';
-  context.fillRect(rectangleCoords.x,  rectangleCoords.y, rectangleCoords.width, rectangleCoords.height);
+  context.fillRect(
+    rectangleCoords.x,
+    rectangleCoords.y,
+    rectangleCoords.width,
+    rectangleCoords.height
+  );
 
   context.drawImage(
     base64ImageCanvasElement,
