@@ -1,7 +1,5 @@
 import nodemailer from 'nodemailer';
 
-import { generateStudentQRCode } from '../../utils/generateStudentQRCode.js';
-
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
@@ -13,23 +11,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-async function sendEmail(studentData) {
-  const QRCode = await generateStudentQRCode();
-
-  const message = {
-    from: process.env.EMAIL_USER,
-    to: studentData.email,
-    subject: 'QRCode de Acesso',
-    html: '<p>Este é o seu QRCode de acesso:</p><img src="cid:student_qr_code@ifpeopensource.com.br" alt="QR code">',
-    attachments: [
-      {
-        filename: 'qrcode.png',
-        path: `${QRCode}`,
-        cid: 'student_qr_code@ifpeopensource.com.br',
-      },
-    ],
-  };
-
+async function sendEmail(message) {
   transporter.sendMail(message, (error) => {
     if (error) {
       console.log(`E-mail não enviado, erro: ${error}`);
