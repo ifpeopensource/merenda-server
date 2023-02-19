@@ -17,7 +17,10 @@ export async function generateStudentQRCode(studentId, base64Image) {
     height: qrCodeOptions.width * 0.3,
   };
 
-  const [qrCodeImageCanvasElement, base64ImageCanvasElement] = Promise.all([loadImage(qrCodeDataUrl), loadImage(base64Image)])
+  const [qrCodeImageCanvasElement, base64ImageCanvasElement] = Promise.all([
+    loadImage(qrCodeDataUrl),
+    loadImage(base64Image),
+  ]);
 
   context.drawImage(
     qrCodeImageCanvasElement,
