@@ -5,10 +5,7 @@ import { generateStudentQRCode } from '../../../utils/generateStudentQRCode.js';
 import { IFOSBase64Logo } from '../assets/IFOSBase64Logo';
 
 async function sendStudentQRCodeEmail(studentData) {
-  const QRCode = await generateStudentQRCode(
-    studentData.id,
-    IFOSBase64Logo
-  );
+  const QRCode = await generateStudentQRCode(studentData.id, IFOSBase64Logo);
   const studentFirstName = studentData.name.split(' ')[0];
 
   const message = {

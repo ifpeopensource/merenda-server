@@ -33,9 +33,9 @@ export async function generateStudentQRCode(studentId, base64Image) {
 
   const centerCoords = {
     x: qrCodeOptions.width / 2,
-    y: qrCodeOptions.width / 2
+    y: qrCodeOptions.width / 2,
   };
-  
+
   const rectangleCoords = {
     width: base64ImageDimensions.width * 1.0,
     height: base64ImageDimensions.height * 1.0,
@@ -48,8 +48,10 @@ export async function generateStudentQRCode(studentId, base64Image) {
 
   context.drawImage(
     base64ImageCanvasElement,
-    rectangleCoords.x + (rectangleCoords.width - base64ImageDimensions.width) / 2,
-    rectangleCoords.y + (rectangleCoords.height - base64ImageDimensions.height) / 2,
+    rectangleCoords.x +
+      (rectangleCoords.width - base64ImageDimensions.width) / 2,
+    rectangleCoords.y +
+      (rectangleCoords.height - base64ImageDimensions.height) / 2,
     base64ImageDimensions.width,
     base64ImageDimensions.height
   );
