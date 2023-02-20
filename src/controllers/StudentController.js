@@ -6,7 +6,7 @@ import { EntryExists } from '../errors/EntryExists.js';
 import StudentService from '../services/StudentService.js';
 
 async function list(request, response) {
-  if (request.role == 'STUDENT') {
+  if (!['ADMIN', 'VERIFIER'].includes(request.role)) {
     return response.sendStatus(403);
   }
 
