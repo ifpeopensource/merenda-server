@@ -6,7 +6,7 @@ async function add(data) {
   let user;
   try {
     user = await prisma.user.create({
-      data: data,
+      data,
     });
   } catch (error) {
     if (error.code == 'P2002') {
@@ -22,7 +22,7 @@ async function add(data) {
 async function read(email) {
   const user = await prisma.user.findUnique({
     where: {
-      email: email,
+      email,
     },
   });
 
@@ -32,9 +32,9 @@ async function read(email) {
 async function update(email, data) {
   const user = await prisma.user.update({
     where: {
-      email: email,
+      email,
     },
-    data: data,
+    data,
   });
 
   return user;
@@ -43,7 +43,7 @@ async function update(email, data) {
 async function del(email) {
   const user = await prisma.user.delete({
     where: {
-      email: email,
+      email,
     },
   });
 

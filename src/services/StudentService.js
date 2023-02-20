@@ -11,7 +11,7 @@ async function findAll() {
 async function add(data) {
   try {
     const student = await prisma.student.create({
-      data: data,
+      data,
     });
     return student;
   } catch (error) {
@@ -46,9 +46,9 @@ async function read(query, type) {
 async function update(id, data) {
   const student = await prisma.student.update({
     where: {
-      id: id,
+      id,
     },
-    data: data,
+    data,
   });
 
   return student;
@@ -57,7 +57,7 @@ async function update(id, data) {
 async function del(id) {
   await prisma.student.delete({
     where: {
-      id: id,
+      id,
     },
   });
 }

@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Student {
-    id        String   @id 
+    id        String   @id
     name      String
     email     String   @unique
     picUrl    String
@@ -23,15 +23,15 @@ model Student {
 }
 
 model User {
-    id          String   @id @default(cuid())
-    name        String
-    password    String
-    student     Student? @relation(fields: [studentId], references: [id])
-    studentId   String?  @unique
-    email       String   @unique
-    role        Role     @default(VERIFIER)
-    createdAt   DateTime @default(now()) 
-    updatedAt   DateTime @updatedAt
+    id        String   @id @default(cuid())
+    name      String
+    password  String
+    student   Student? @relation(fields: [studentId], references: [id])
+    studentId String?  @unique
+    email     String   @unique
+    role      Role     @default(VERIFIER)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@map("users")
 }
@@ -41,4 +41,3 @@ enum Role {
     VERIFIER
     ADMIN
 }
-

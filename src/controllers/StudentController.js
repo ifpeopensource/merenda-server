@@ -14,7 +14,7 @@ async function list(request, response) {
     const students = await StudentService.findAll();
     return response.json(students);
   } catch (error) {
-    return response.status(500).json({ error: error });
+    return response.status(500).json({ error });
   }
 }
 
@@ -83,7 +83,7 @@ async function read(request, response) {
   const student = await StudentService.read(id, 0);
 
   if (student) {
-    return response.json({ data: student });
+    return response.json({ student });
   } else {
     return response.sendStatus(404);
   }
@@ -167,7 +167,7 @@ async function find(request, response) {
   const student = await StudentService.read(email, 1);
 
   if (student) {
-    return response.json({ student: student });
+    return response.json({ student });
   } else {
     return response.sendStatus(404);
   }

@@ -59,7 +59,7 @@ async function read(request, response) {
   const user = await UserService.read(email);
 
   if (user) {
-    return response.json({ user: user });
+    return response.json({ user });
   } else {
     return response.sendStatus(404);
   }
