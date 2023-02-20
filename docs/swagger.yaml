@@ -59,8 +59,47 @@ paths:
         "201":
           $ref: "#/components/responses/UserData"
 
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Erro de Validação'
+                  - $ref: '#/components/schemas/Usuário Já Existe'
+
+              examples:
+                Erro de Validação de Dados:
+                  value:
+                      error:
+                        message: "Validation error: Password too weak! at \"password\"; Invalid email at \"email\"; Expected string, received number at \"name\""
+                        details:
+                          issues:
+                            - code: invalid_string
+                              validation: regex
+                              path: ["password"]
+                              message: Password too weak!
+                            - code: invalid_string
+                              validation: email
+                              path: ["email"]
+                              message: Invalid email
+                            - code: invalid_type
+                              expected: string
+                              received: number
+                              path: ["name"]
+                              message: Expected string, received number
+                          name: ZodError
+
+                Usuário Já Existe:
+                  value:
+                    error:
+                      message: User already exists in database!
+
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
         "500":
           $ref: "#/components/responses/InternalServerError"
@@ -81,8 +120,14 @@ paths:
         "200":
           $ref: "#/components/responses/UserData"
 
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
         "404":
           $ref: "#/components/responses/NotFound"
@@ -108,8 +153,14 @@ paths:
         "200":
           $ref: "#/components/responses/UserData"
 
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
         "404":
           $ref: "#/components/responses/NotFound"
@@ -132,8 +183,14 @@ paths:
         "204":
           $ref: "#/components/responses/NoContent"
 
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
         "404":
           $ref: "#/components/responses/NotFound"
@@ -142,6 +199,33 @@ paths:
           $ref: "#/components/responses/InternalServerError"
 
   /students:
+    get:
+      description: Retorna uma lista de estudantes.
+      operationId: Listar Estudantes
+      tags:
+        - students
+      security:
+        - OAuth:
+            - VERIFIER
+      responses:
+        "200":
+          description: Lista de estudantes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
     post:
       description: Cria um novo estudante.
       operationId: Criar Estudante
@@ -157,8 +241,43 @@ paths:
         "201":
           $ref: "#/components/responses/StudentData"
 
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Erro de Validação'
+                  - $ref: '#/components/schemas/Estudante Já Existe'
+
+              examples:
+                Erro de Validação de Dados:
+                  value:
+                      error:
+                        message: "Validation error: Invalid email at \"email\"; Expected string, received number at \"name\""
+                        details:
+                          issues:
+                            - code: invalid_string
+                              validation: email
+                              path: ["email"]
+                              message: Invalid email
+                            - code: invalid_type
+                              expected: string
+                              received: number
+                              path: ["name"]
+                              message: Expected string, received number
+                          name: ZodError
+
+                Estudante Já Existe:
+                  value:
+                    error:
+                      message: Student already exists in database!
+
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
         "500":
           $ref: "#/components/responses/InternalServerError"
@@ -179,8 +298,14 @@ paths:
         "200":
           $ref: "#/components/responses/StudentData"
 
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
         "404":
           $ref: "#/components/responses/NotFound"
@@ -227,8 +352,14 @@ paths:
         "200":
           $ref: "#/components/responses/UserData"
 
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
         "404":
           $ref: "#/components/responses/NotFound"
@@ -251,8 +382,14 @@ paths:
         "204":
           $ref: "#/components/responses/NoContent"
 
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
         "404":
           $ref: "#/components/responses/NotFound"
@@ -268,7 +405,7 @@ paths:
         - students
       security:
         - OAuth:
-            - ADMIN
+            - VERIFIER
       parameters:
         - in: query
           name: email
@@ -282,8 +419,14 @@ paths:
         "200":
           $ref: "#/components/responses/StudentData"
 
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
         "401":
           $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
 
         "404":
           $ref: "#/components/responses/NotFound"
@@ -307,6 +450,35 @@ components:
             "USER": Permissões de usuário
 
   schemas:
+    StudentData:
+      description: |
+        Dados de um estudante.
+      type: object
+      properties:
+        id:
+          type: string
+          format: studentId
+          description: Matrícula do estudante
+        name:
+          type: string
+          description: Nome do estudante
+        email:
+          type: string
+          format: email
+          description: E-mail do estudante
+        picUrl:
+          type: string
+          format: uri
+          description: URL da foto do estudante
+        createdAt:
+          type: string
+          format: date-time
+          description: Data de criação do estudante
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data de atualização do estudante
+
     Role:
       description: |
         Tipos de usuário na aplicação. Cada usuário possui permissões diferentes.
@@ -315,6 +487,95 @@ components:
         - "ADMIN"
         - "VERIFIER"
         - "USER"
+
+    ZodInvalidValueTypeIssue:
+      type: object
+      properties:
+        code:
+          type: string
+          enum: [invalid_type]
+        expected:
+          type: string
+          description: Tipo esperado
+        received:
+          type: string
+          description: Tipo recebido
+        path:
+          type: array
+          description: Campos com erro
+          items:
+            type: string
+        message:
+          description: Mensagem de erro do Zod
+          type: string
+
+    ZodInvalidValue:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Código do erro
+          example: invalid_string
+        path:
+          type: array
+          description: Campos com erro
+          items:
+            type: string
+        validation:
+          type: string
+          description: Validação que falhou
+          example:
+            - regex
+            - email
+        message:
+          description: Mensagem de erro do Zod
+          type: string
+
+    Erro de Validação:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+            details:
+              type: object
+              description: Detalhes do erro
+              properties:
+                issues:
+                  type: array
+                  description: Lista de erros
+                  items:
+                    anyOf:
+                      - $ref: "#/components/schemas/ZodInvalidValueTypeIssue"
+                      - $ref: "#/components/schemas/ZodInvalidValue"
+                name:
+                  type: string
+                  enum: [ZodError]
+
+    Usuário Já Existe:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+              enum: [User already exists in database!]
+
+    Estudante Já Existe:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+              enum: [Student already exists in database!]
 
   parameters:
     userEmail:
@@ -443,31 +704,7 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              id:
-                type: string
-                format: studentId
-                description: Matrícula do estudante
-              name:
-                type: string
-                description: Nome do estudante
-              email:
-                type: string
-                format: email
-                description: E-mail do estudante
-              picUrl:
-                type: string
-                format: uri
-                description: URL da foto do estudante
-              createdAt:
-                type: string
-                format: date-time
-                description: Data de criação do estudante
-              updatedAt:
-                type: string
-                format: date-time
-                description: Data de atualização do estudante
+            $ref: "#/components/schemas/StudentData"
 
           example:
             id: "20231H61RC1234"
@@ -480,11 +717,77 @@ components:
     NoContent:
       description: Sucesso. Sem conteúdo.
 
+    BadRequestValidation:
+      description: Requisição inválida. Erro de validação.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro de Validação'
+
+          examples:
+            Erro de Validação de Dados:
+              value:
+                  error:
+                    message: "Validation error: Invalid email at \"email\"; Expected string, received number at \"name\""
+                    details:
+                      issues:
+                        - code: invalid_string
+                          validation: email
+                          path: ["email"]
+                          message: Invalid email
+                        - code: invalid_type
+                          expected: string
+                          received: number
+                          path: ["name"]
+                          message: Expected string, received number
+                      name: ZodError
+
     NotFound:
       description: Não econtrado
 
     InternalServerError:
       description: Erro interno do servidor
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensagem de erro
+                  details:
+                    type: string
+                    description: Detalhes do erro
+            example:
+              error:
+                message: Internal server error
+                details: "Error: Internal server error"
+
+    ForbiddenError:
+      description: Acesso negado. O usuário não tem permissão para realizar esta ação.
 
     UnauthorizedError:
       description: Token de acesso não informado, inválido ou o usuário não tem permissão para realizar esta ação
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensagem de erro
+          examples:
+            Token não informado:
+              value:
+                error:
+                  message: Missing authorization header
+            Token inválido:
+              value:
+                error:
+                  message: Invalid access token
