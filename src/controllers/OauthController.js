@@ -30,7 +30,6 @@ async function login(request, response) {
     const token = await OauthService.createToken(password, user);
     return response
       .set({ 'Cache-Control': 'no-store' })
-      .status(200)
       .json({ access_token: token, token_type: 'Bearer' });
   } catch (error) {
     if (error instanceof InvalidPassword) {
