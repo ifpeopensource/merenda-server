@@ -19,7 +19,7 @@ async function list(request, response) {
 }
 
 async function add(request, response) {
-  if (request.role != 'ADMIN') {
+  if (request.role !== 'ADMIN') {
     return response.sendStatus(403);
   }
 
