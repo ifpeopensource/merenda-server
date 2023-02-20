@@ -2,6 +2,10 @@ import { prisma } from '../PrismaClient.js';
 
 import { EntryExists } from '../errors/EntryExists.js';
 
+const PRISMA_ERRORS = {
+  alreadyExists: 'P2002',
+};
+
 async function findAll() {
   const students = await prisma.student.findMany();
 
@@ -15,7 +19,7 @@ async function add(data) {
     });
     return student;
   } catch (error) {
-    if (error.code == 'P2002') {
+    if (error.code == PRISMA_ERRORS.alreadyExists) {
       throw new EntryExists();
     } else {
       throw error;
@@ -26,7 +30,7 @@ async function add(data) {
 async function read(query, byEmail) {
   let student;
 
-  if (type) {
+  if (byEmail) {
     student = await prisma.student.findUnique({
       where: {
         email: query,

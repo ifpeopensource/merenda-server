@@ -2,14 +2,29 @@ import { prisma } from '../PrismaClient.js';
 
 import { EntryExists } from '../errors/EntryExists.js';
 
+const PRISMA_ERRORS = {
+  alreadyExists: 'P2002',
+};
+
+const resultSelectFields = {
+  id: true,
+  name: true,
+  studentId: true,
+  email: true,
+  role: true,
+  createdAt: true,
+  updatedAt: true,
+};
+
 async function add(data) {
   let user;
   try {
     user = await prisma.user.create({
       data,
+      select: resultSelectFields,
     });
   } catch (error) {
-    if (error.code == 'P2002') {
+    if (error.code == PRISMA_ERRORS.alreadyExists) {
       throw new EntryExists();
     } else {
       throw error;
@@ -24,6 +39,7 @@ async function read(email) {
     where: {
       email,
     },
+    select: resultSelectFields,
   });
 
   return user;
@@ -35,6 +51,7 @@ async function update(email, data) {
       email,
     },
     data,
+    select: resultSelectFields,
   });
 
   return user;
@@ -45,6 +62,7 @@ async function del(email) {
     where: {
       email,
     },
+    select: resultSelectFields,
   });
 
   return user;
