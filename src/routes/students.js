@@ -2,7 +2,7 @@ import express from 'express';
 
 import StudentController from '../controllers/StudentController.js';
 
-import AuthMiddleware from '../middlewares/AdminMiddleware.js';
+import AuthMiddleware from '../middlewares/AuthMiddleware.js';
 import RequireAdminMiddleware from '../middlewares/RequireAdminMiddleware.js';
 import RequireVerifierMiddleware from '../middlewares/RequireVerifierMiddleware.js';
 
