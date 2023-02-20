@@ -7,10 +7,6 @@ import StudentService from '../services/StudentService.js';
 import generateFormattedError from '../utils/generateFormattedError.js';
 
 async function list(request, response) {
-  if (!['ADMIN', 'VERIFIER'].includes(request.role)) {
-    return response.sendStatus(403);
-  }
-
   try {
     const students = await StudentService.findAll();
     return response.json(students);
@@ -22,10 +18,6 @@ async function list(request, response) {
 }
 
 async function add(request, response) {
-  if (request.role !== 'ADMIN') {
-    return response.sendStatus(403);
-  }
-
   const idSchema = z
     .string()
     .min(12)
@@ -65,10 +57,6 @@ async function add(request, response) {
 }
 
 async function read(request, response) {
-  if (!['ADMIN', 'VERIFIER'].includes(request.role)) {
-    return response.sendStatus(403);
-  }
-
   const idSchema = z
     .string()
     .min(12)
@@ -93,10 +81,6 @@ async function read(request, response) {
 }
 
 async function update(request, response) {
-  if (request.role !== 'ADMIN') {
-    return response.sendStatus(403);
-  }
-
   const idSchema = z
     .string()
     .min(12)
@@ -130,10 +114,6 @@ async function update(request, response) {
 }
 
 async function del(request, response) {
-  if (request.role !== 'ADMIN') {
-    return response.sendStatus(403);
-  }
-
   const idSchema = z
     .string()
     .min(12)

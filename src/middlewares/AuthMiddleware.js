@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const StudentMiddleware = (request, response, next) => {
+function AuthMiddleware(request, response, next) {
   const authHeader = request.headers.authorization;
 
   if (!authHeader) {
@@ -22,6 +22,6 @@ const StudentMiddleware = (request, response, next) => {
     request.role = decoded.role;
     next();
   });
-};
+}
 
-export default StudentMiddleware;
+export default AuthMiddleware;

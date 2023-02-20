@@ -2,11 +2,13 @@ import express from 'express';
 
 import UserController from '../controllers/UserController.js';
 
-import UserMiddleware from '../middlewares/UserMiddleware.js';
+import AuthMiddleware from '../middlewares/AUthMiddleware.js';
+import RequireAdminMiddleware from '../middlewares/RequireAdminMiddleware.js';
 
 const routes = express.Router();
 
-routes.use(UserMiddleware);
+routes.use(AuthMiddleware);
+routes.use(RequireAdminMiddleware);
 
 routes.post('/users', UserController.add);
 
