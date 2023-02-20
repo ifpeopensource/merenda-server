@@ -1,12 +1,10 @@
 import { fromZodError } from 'zod-validation-error';
 
 export default function generateFormattedError(zodError) {
-  const formattedError = {
+  return {
     error: {
       message: fromZodError(zodError).message,
       details: zodError,
     },
   };
-
-  return formattedError;
 }
