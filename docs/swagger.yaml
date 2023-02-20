@@ -1,0 +1,490 @@
+openapi: 3.0.0
+info:
+  title: Merenda (server)
+  description: |
+    Servidor da aplicação de entrega da merenda escolar do IFPE - Campus Recife.
+
+    [Acessar documentação Swagger UI](./swagger-ui.html)
+
+    # Autenticação
+
+    Para acessar os endpoints protegidos, é necessário autenticação.
+    <SecurityDefinitions />
+
+  version: 1.0.0
+  contact:
+    name: IFPE Open Source
+    email: oi@ifpeopensource.com.br
+    url: https://ifpeopensource.com.br
+  license:
+    name: MIT
+    url: https://github.com/ifpeopensource/merenda-server/blob/55c2a2bf85f99681a9c7df568e1e2bedbaac8b74/LICENSE
+  x-logo:
+    url: "https://raw.githubusercontent.com/ifpeopensource/.github/ff4b9f3fe9da65872eb3d841d89a3b1009fa618f/assets/logotype_horizontal_dark.svg"
+    altText: IFPE Open Source
+
+externalDocs:
+  description: README no GitHub
+  url: https://github.com/ifpeopensource/merenda-server#readme
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desenvolvimento
+
+tags:
+  - name: users
+    x-displayName: Usuários
+    description: Operações relacionadas a usuários
+  - name: students
+    x-displayName: Estudantes
+    description: Operações relacionadas a estudantes
+  - name: roles
+    x-displayName: Tipos de Usuário
+    description: <SchemaDefinition schemaRef="#/components/schemas/Role" />
+
+paths:
+  /users:
+    post:
+      operationId: Criar Usuário
+      description: Cria um novo usuário.
+      tags:
+        - users
+      security:
+        - OAuth:
+            - ADMIN
+      requestBody:
+        $ref: "#/components/requestBodies/UserData"
+
+      responses:
+        "201":
+          $ref: "#/components/responses/UserData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /users/{email}:
+    get:
+      operationId: Encontrar Usuário
+      description: Retorna dados de um usuário pelo seu e-mail.
+      tags:
+        - users
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/userEmail"
+
+      responses:
+        "200":
+          $ref: "#/components/responses/UserData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    put:
+      description: Atualiza dados de um usuário.
+      operationId: Atualizar Usuário
+      tags:
+        - users
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/userEmail"
+
+      requestBody:
+        $ref: "#/components/requestBodies/UserData"
+
+      responses:
+        "200":
+          $ref: "#/components/responses/UserData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    delete:
+      description: Deleta usuário.
+      operationId: Deletar Usuário
+      tags:
+        - users
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/userEmail"
+
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /students:
+    post:
+      description: Cria um novo estudante.
+      operationId: Criar Estudante
+      tags:
+        - students
+      security:
+        - OAuth:
+            - ADMIN
+      requestBody:
+        $ref: "#/components/requestBodies/StudentData"
+
+      responses:
+        "201":
+          $ref: "#/components/responses/StudentData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /students/{id}:
+    get:
+      description: Retorna dados de um estudante pela sua matrícula.
+      operationId: Encontrar Estudante por Matrícula
+      tags:
+        - students
+      security:
+        - OAuth:
+            - VERIFIER
+      parameters:
+        - $ref: "#/components/parameters/studentId"
+
+      responses:
+        "200":
+          $ref: "#/components/responses/StudentData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    put:
+      description: Atualiza dados de um estudante.
+      operationId: Atualizar Estudante
+      tags:
+        - students
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/studentId"
+
+      requestBody:
+        description: Dados do estudante
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: E-mail do estudante
+                name:
+                  type: string
+                  description: Nome do estudante
+                picUrl:
+                  type: string
+                  format: uri
+
+            example:
+              email: example@discente.ifpe.edu.br
+              name: John Doe
+              picUrl: https://picsum.photos/200
+
+      responses:
+        "200":
+          $ref: "#/components/responses/UserData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    delete:
+      description: Deleta estudante.
+      operationId: Deletar Estudante
+      tags:
+        - students
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/studentId"
+
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /students/find-by-email:
+    get:
+      description: Retorna dados de um estudante pelo seu E-mail.
+      operationId: Encontrar Estudante por E-mail
+      tags:
+        - students
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            format: email
+          required: true
+          description: E-mail do estudante
+
+      responses:
+        "200":
+          $ref: "#/components/responses/StudentData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  securitySchemes:
+    OAuth:
+      description: |
+        Para acessar certos endpoints, é necessário se autenticar com o OAuth2.0.
+
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://localhost:3000/oauth/login
+          scopes:
+            "ADMIN": Permissões de administrador
+            "VERIFIER": Permissões de verificador
+            "USER": Permissões de usuário
+
+  schemas:
+    Role:
+      description: |
+        Tipos de usuário na aplicação. Cada usuário possui permissões diferentes.
+      type: string
+      enum:
+        - "ADMIN"
+        - "VERIFIER"
+        - "USER"
+
+  parameters:
+    userEmail:
+      name: email
+      description: E-mail do usuário
+      required: true
+      in: path
+      schema:
+        type: string
+        format: email
+
+    studentId:
+      name: id
+      description: Matrícula do estudante
+      in: path
+      schema:
+        type: string
+        format: studentId
+      required: true
+
+  requestBodies:
+    UserData:
+      description: Dados do usuário
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                description: E-mail do usuário
+              name:
+                type: string
+                description: Nome do usuário
+              password:
+                type: string
+                format: password
+                description: Senha do usuário
+              role:
+                $ref: "#/components/schemas/Role"
+
+          example:
+            email: example@ifpeopensource.com.br
+            name: John Doe
+            password: str&ngPass1
+            role: ADMIN
+
+    StudentData:
+      description: Dados do estudante
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                format: studentId
+                description: Matrícula do estudante
+              email:
+                type: string
+                format: email
+                description: E-mail do estudante
+              name:
+                type: string
+                description: Nome do estudante
+              picUrl:
+                type: string
+                format: uri
+                description: URL da foto do estudante
+
+          example:
+            id: 20231H61RC1234
+            email: example@discente.ifpe.edu.br
+            name: John Doe
+            picUrl: https://picsum.photos/200
+
+  responses:
+    UserData:
+      description: Dados do usuário
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                format: cuid
+                description: ID do usuário
+              name:
+                type: string
+                description: Nome do usuário
+              email:
+                type: string
+                format: email
+                description: E-mail do usuário
+              studentId:
+                type: string
+                format: studentId
+                nullable: true
+                description: Matrícula do estudante, caso o usuário seja um estudante
+              role:
+                $ref: "#/components/schemas/Role"
+              createdAt:
+                type: string
+                format: date-time
+                description: Data de criação do usuário
+              updatedAt:
+                type: string
+                format: date-time
+                description: Data de atualização do usuário
+
+          example:
+            id: "cleaqjsco000asfvno6ibo33r"
+            name: John Doe
+            email: example@ifpeopensource.com.br
+            studentId: null
+            role: ADMIN
+            createdAt: 2023-02-19T21:08:59.271Z
+            updatedAt: 2023-02-19T21:08:59.271Z
+
+    StudentData:
+      description: Dados do estudante
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                format: studentId
+                description: Matrícula do estudante
+              name:
+                type: string
+                description: Nome do estudante
+              email:
+                type: string
+                format: email
+                description: E-mail do estudante
+              picUrl:
+                type: string
+                format: uri
+                description: URL da foto do estudante
+              createdAt:
+                type: string
+                format: date-time
+                description: Data de criação do estudante
+              updatedAt:
+                type: string
+                format: date-time
+                description: Data de atualização do estudante
+
+          example:
+            id: "20231H61RC1234"
+            name: John Doe
+            email: example@ifpeopensource.com.br
+            picUrl: https://picsum.photos/200
+            createdAt: 2023-02-19T21:08:59.271Z
+            updatedAt: 2023-02-19T21:08:59.271Z
+
+    NoContent:
+      description: Sucesso. Sem conteúdo.
+
+    NotFound:
+      description: Não econtrado
+
+    InternalServerError:
+      description: Erro interno do servidor
+
+    UnauthorizedError:
+      description: Token de acesso não informado, inválido ou o usuário não tem permissão para realizar esta ação
