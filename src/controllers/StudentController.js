@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import { fromZodError } from 'zod-validation-error';
 
 import { EntryExists } from '../errors/EntryExists.js';
 
 import StudentService from '../services/StudentService.js';
+
+import generateFormattedError from '../utils/generateFormattedError.js';
 
 async function list(request, response) {
   if (!['ADMIN', 'VERIFIER'].includes(request.role)) {
@@ -14,7 +15,9 @@ async function list(request, response) {
     const students = await StudentService.findAll();
     return response.json(students);
   } catch (error) {
-    return response.status(500).json({ error });
+    return response
+      .status(500)
+      .json({ error: { message: error.message, details: error } });
   }
 }
 
@@ -44,7 +47,7 @@ async function add(request, response) {
   try {
     data = bodySchema.parse(request.body);
   } catch (error) {
-    return response.status(400).json(fromZodError(error));
+    return response.status(400).json(generateFormattedError(error));
   }
 
   try {
@@ -52,11 +55,11 @@ async function add(request, response) {
     return response.status(201).json(student);
   } catch (error) {
     if (error instanceof EntryExists) {
-      return response.status(400).json({ error: error.message });
+      return response.status(400).json({ error: { message: error.message } });
     } else {
       return response
         .status(500)
-        .json({ error: error.message, errorCode: error.code });
+        .json({ error: { message: error.message, details: error } });
     }
   }
 }
@@ -77,7 +80,7 @@ async function read(request, response) {
   try {
     id = idSchema.parse(request.params.id);
   } catch (error) {
-    return response.status(400).json(fromZodError(error));
+    return response.status(400).json(generateFormattedError(error));
   }
 
   const student = await StudentService.read(id);
@@ -115,7 +118,7 @@ async function update(request, response) {
     id = idSchema.parse(request.params.id);
     data = bodySchema.parse(request.body);
   } catch (error) {
-    return response.status(400).json(fromZodError(error));
+    return response.status(400).json(generateFormattedError(error));
   }
 
   try {
@@ -142,12 +145,12 @@ async function del(request, response) {
   try {
     id = idSchema.parse(request.params.id);
   } catch (error) {
-    return response.status(400).json({ error: 'Invalid ID Format!' });
+    return response.status(400).json(generateFormattedError(error));
   }
 
   try {
     await StudentService.del(id);
-    return response.status(204).send();
+    return response.sendStatus(204);
   } catch (error) {
     return response.sendStatus(404);
   }
@@ -161,7 +164,7 @@ async function find(request, response) {
   try {
     email = emailSchema.parse(request.query.email);
   } catch (error) {
-    response.status(400).json(fromZodError(error));
+    return response.status(400).json(generateFormattedError(error));
   }
 
   const student = await StudentService.read(email, true);

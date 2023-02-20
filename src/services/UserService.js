@@ -6,7 +6,7 @@ const PRISMA_ERRORS = {
   alreadyExists: 'P2002',
 };
 
-const resultSelectFields = {
+const SELECTION_SET = {
   id: true,
   name: true,
   studentId: true,
@@ -21,7 +21,7 @@ async function add(data) {
   try {
     user = await prisma.user.create({
       data,
-      select: resultSelectFields,
+      select: SELECTION_SET,
     });
   } catch (error) {
     if (error.code == PRISMA_ERRORS.alreadyExists) {
@@ -39,7 +39,7 @@ async function read(email) {
     where: {
       email,
     },
-    select: resultSelectFields,
+    select: SELECTION_SET,
   });
 
   return user;
@@ -51,7 +51,7 @@ async function update(email, data) {
       email,
     },
     data,
-    select: resultSelectFields,
+    select: SELECTION_SET,
   });
 
   return user;
@@ -62,13 +62,13 @@ async function del(email) {
     where: {
       email,
     },
-    select: resultSelectFields,
+    select: SELECTION_SET,
   });
 
   return user;
 }
 
-async function getHash(email) {
+async function getAuthData(email) {
   const user = await prisma.user.findUnique({
     where: {
       email,
@@ -83,4 +83,4 @@ async function getHash(email) {
   return user;
 }
 
-export default { add, read, update, del, getHash };
+export default { add, read, update, del, getAuthData };
