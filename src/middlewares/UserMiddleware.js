@@ -16,7 +16,7 @@ const UserMiddleware = (request, response, next) => {
 
     request.userid = decoded.id;
 
-    if (decoded.role != 'ADMIN') {
+    if (decoded.role !== 'ADMIN') {
       return response.sendStatus(403);
     }
 

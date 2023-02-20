@@ -23,7 +23,7 @@ async function add(data) {
   }
 }
 
-async function read(query, type) {
+async function read(query, byEmail) {
   let student;
 
   if (type) {

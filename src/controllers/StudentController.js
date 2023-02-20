@@ -6,7 +6,7 @@ import { EntryExists } from '../errors/EntryExists.js';
 import StudentService from '../services/StudentService.js';
 
 async function list(request, response) {
-  if (request.role == 'STUDENT') {
+  if (!['ADMIN', 'VERIFIER'].includes(request.role)) {
     return response.sendStatus(403);
   }
 
@@ -19,7 +19,7 @@ async function list(request, response) {
 }
 
 async function add(request, response) {
-  if (request.role != 'ADMIN') {
+  if (request.role !== 'ADMIN') {
     return response.sendStatus(403);
   }
 
@@ -56,13 +56,13 @@ async function add(request, response) {
     } else {
       return response
         .status(500)
-        .json({ error: error.message, code: error.code });
+        .json({ error: error.message, errorCode: error.code });
     }
   }
 }
 
 async function read(request, response) {
-  if (request.role == 'STUDENT') {
+  if (!['ADMIN', 'VERIFIER'].includes(request.role)) {
     return response.sendStatus(403);
   }
 
@@ -80,7 +80,7 @@ async function read(request, response) {
     return response.status(400).json(fromZodError(error));
   }
 
-  const student = await StudentService.read(id, 0);
+  const student = await StudentService.read(id);
 
   if (student) {
     return response.json({ student });
@@ -90,7 +90,7 @@ async function read(request, response) {
 }
 
 async function update(request, response) {
-  if (request.role != 'ADMIN') {
+  if (request.role !== 'ADMIN') {
     return response.sendStatus(403);
   }
 
@@ -127,7 +127,7 @@ async function update(request, response) {
 }
 
 async function del(request, response) {
-  if (request.role != 'ADMIN') {
+  if (request.role !== 'ADMIN') {
     return response.sendStatus(403);
   }
 
@@ -164,7 +164,7 @@ async function find(request, response) {
     response.status(400).json(fromZodError(error));
   }
 
-  const student = await StudentService.read(email, 1);
+  const student = await StudentService.read(email, true);
 
   if (student) {
     return response.json({ student });
