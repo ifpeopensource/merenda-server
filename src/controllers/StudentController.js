@@ -26,7 +26,7 @@ async function add(request, response) {
   const idSchema = z
     .string()
     .min(12)
-    .regex(/\d{5}.{2,5}\d{4}/g)
+    .regex(/\d{5}.{2,5}\d{4}/g, 'Invalid ID Format!')
     .transform((val) => val.toUpperCase());
   const emailSchema = z.string().email();
   const picSchema = z.string().url();
@@ -52,7 +52,7 @@ async function add(request, response) {
     return response.status(201).json(student);
   } catch (error) {
     if (error instanceof EntryExists) {
-      return response.sendStatus(400);
+      return response.status(400).json({ error: error.message });
     } else {
       return response
         .status(500)
@@ -69,7 +69,7 @@ async function read(request, response) {
   const idSchema = z
     .string()
     .min(12)
-    .regex(/\d{5}.{2,5}\d{4}/g)
+    .regex(/\d{5}.{2,5}\d{4}/g, 'Invalid ID Format!')
     .transform((val) => val.toUpperCase());
 
   let id;
@@ -97,7 +97,7 @@ async function update(request, response) {
   const idSchema = z
     .string()
     .min(12)
-    .regex(/\d{5}.{2,5}\d{4}/g)
+    .regex(/\d{5}.{2,5}\d{4}/g, 'Invalid ID Format!')
     .transform((val) => val.toUpperCase());
   const emailSchema = z.string().email();
   const picSchema = z.string().url();
@@ -134,7 +134,7 @@ async function del(request, response) {
   const idSchema = z
     .string()
     .min(12)
-    .regex(/\d{5}.{2,5}\d{4}/g)
+    .regex(/\d{5}.{2,5}\d{4}/g, 'Invalid ID Format!')
     .transform((val) => val.toUpperCase());
 
   let id;

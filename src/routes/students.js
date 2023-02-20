@@ -8,13 +8,13 @@ const routes = express.Router();
 
 routes.use(StudentMiddleware);
 
+routes.get('/students/find-by-email', StudentController.find);
+
 routes.get('/students', StudentController.list);
 
 routes.post('/students', StudentController.add);
 
 routes.get('/students/:id', StudentController.read);
-
-routes.get('/students/find-by-email', StudentController.find);
 
 routes.put('/students/:id', StudentController.update);
 

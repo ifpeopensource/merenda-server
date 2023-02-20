@@ -36,7 +36,7 @@ async function add(request, response) {
     return response.status(201).json(user);
   } catch (error) {
     if (error instanceof EntryExists) {
-      return response.sendStatus(400);
+      return response.status(400).json({ error: error.message });
     } else {
       return response
         .status(500)

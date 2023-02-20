@@ -12,7 +12,7 @@ async function login(request, response) {
     return response.status(400).json({ error: 'Invalid Email Format!' });
   }
 
-  const user = await UserService.read(request.body.email);
+  const user = await UserService.getHash(request.body.email);
 
   if (!user) {
     return response.status(401).json({ error: 'Invalid Credentials!' });

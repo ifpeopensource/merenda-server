@@ -68,4 +68,19 @@ async function del(email) {
   return user;
 }
 
-export default { add, read, update, del };
+async function getHash(email) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+      password: true,
+      role: true,
+    },
+  });
+
+  return user;
+}
+
+export default { add, read, update, del, getHash };
