@@ -1,21 +1,21 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
-import oauthRoute from './routes/oauth.js';
-import studentsRoute from './routes/students.js';
-import usersRoute from './routes/users.js';
-
-dotenv.config();
+import oauthRoutes from './routes/oauth.js';
+import studentsRoutes from './routes/students.js';
+import usersRoutes from './routes/users.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use(oauthRoute);
-app.use(studentsRoute);
-app.use(usersRoute);
+app.use(oauthRoutes);
+app.use(studentsRoutes);
+app.use(usersRoutes);
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

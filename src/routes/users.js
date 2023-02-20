@@ -8,12 +8,12 @@ const routes = express.Router();
 
 routes.use(UserMiddleware);
 
-routes.post('/users/add', UserController.add);
+routes.post('/users', UserController.add);
 
-routes.get('/users/read', UserController.read);
+routes.get('/users/:email', UserController.read);
 
-routes.put('/users/update', UserController.update);
+routes.put('/users/:email', UserController.update);
 
-routes.delete('/users/delete', UserController.del);
+routes.delete('/users/:email', UserController.del);
 
 export default routes;

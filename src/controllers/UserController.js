@@ -1,47 +1,42 @@
+import bcrypt from 'bcrypt';
+import { z } from 'zod';
+import { fromZodError } from 'zod-validation-error';
+
+import { EntryExists } from '../errors/EntryExists.js';
+
 import UserService from '../services/UserService.js';
 
-import bcrypt from 'bcrypt';
-
-import { z } from 'zod';
-
-async function add(_request, response) {
+async function add(request, response) {
   const emailSchema = z.string().email();
   const nameSchema = z.string();
   // Regex Magic to validate that password is strong
   const passSchema = z
     .string()
-    .regex(new RegExp('^(?=.*[0-9])(?=.*[-?/|{}=!@#$%^&*]).{8,32}$'));
-  const roleSchema = z.enum(['USER', 'VERIFIER', 'ADMIN']);
+    .regex(/^(?=.*[0-9])(?=.*[-?/|{}=!@#$%^&*]).{8,32}$/g)
+    .transform(async (val) => await bcrypt.hash(val, 10));
+  const roleSchema = z.enum(['USER', 'VERIFIER', 'ADMIN']).catch('VERIFIER');
 
-  const { email, name } = _request.body;
+  const bodySchema = z.object({
+    password: passSchema,
+    email: emailSchema,
+    role: roleSchema,
+    name: nameSchema,
+  });
 
-  const plain_password = _request.body.password;
+  let data;
 
-  let { role } = _request.body;
-
-  if (!emailSchema.safeParse(email).success) {
-    return response.status(400).json({ error: 'Malformed Email!' });
+  try {
+    data = await bodySchema.parseAsync(request.body);
+  } catch (error) {
+    return response.status(400).json(fromZodError(error));
   }
-  if (!nameSchema.safeParse(name).success) {
-    return response.status(400).json({ error: 'Malformed Name!' });
-  }
-  if (!passSchema.safeParse(plain_password).success) {
-    return response.status(400).json({ error: 'Malformed Password!' });
-  }
-  if (!roleSchema.safeParse(role).success) {
-    role = 'VERIFIER';
-  }
-
-  const password = await bcrypt.hash(plain_password, 10);
-
-  const data = { name, password, email, role };
 
   try {
     const user = await UserService.add(data);
     return response.status(201).json(user);
   } catch (error) {
-    if (error.code == 'P2002') {
-      return response.status(204).send();
+    if (error instanceof EntryExists) {
+      return response.sendStatus(400);
     } else {
       return response
         .status(500)
@@ -50,54 +45,49 @@ async function add(_request, response) {
   }
 }
 
-async function read(_request, response) {
+async function read(request, response) {
   const emailSchema = z.string().email();
 
-  if (!emailSchema.safeParse(_request.query.email).success) {
-    return response.status(400).json({ error: 'Malformed Email!' });
-  }
+  let email;
 
-  const email = _request.query.email;
+  try {
+    email = emailSchema.parse(request.params.email);
+  } catch (error) {
+    return response.status(400).json(fromZodError(error));
+  }
 
   const user = await UserService.read(email);
 
   if (user) {
-    return response.json({ data: user });
+    return response.json({ user: user });
   } else {
     return response.sendStatus(404);
   }
 }
 
-async function update(_request, response) {
+async function update(request, response) {
   const emailSchema = z.string().email();
   const nameSchema = z.string();
   // Regex Magic to validate that password is strong
   const passSchema = z
     .string()
-    .regex(new RegExp('^(?=.*[0-9])(?=.*[-?/|{}=!@#$%^&*]).{8,32}$'));
+    .regex(/^(?=.*[0-9])(?=.*[-?/|{}=!@#$%^&*]).{8,32}$/g)
+    .transform(async (val) => await bcrypt.hash(val, 10));
   const roleSchema = z.enum(['USER', 'VERIFIER', 'ADMIN']);
 
-  const { name, role, email } = _request.body;
-  const plain_password = _request.body.password;
+  const bodySchema = z.object({
+    password: passSchema,
+    role: roleSchema,
+    name: nameSchema,
+  });
 
-  let data = {};
+  let data, email;
 
-  if (!emailSchema.safeParse(email).success) {
-    return response.status(400).json({ error: 'Malformed Email!' });
-  }
-  if (!nameSchema.safeParse(name).success) {
-    return response.status(400).json({ error: 'Malformed Email!' });
-  }
-  if (!passSchema.safeParse(plain_password).success) {
-    return response.status(400).json({ error: 'Malformed Password!' });
-  }
-
-  const password = await bcrypt.hash(plain_password, 10);
-
-  if (roleSchema.safeParse(role).success) {
-    data = { name: name, password: password, role: role };
-  } else {
-    data = { name: name, password: password };
+  try {
+    data = await bodySchema.parseAsync(request.body);
+    email = emailSchema.parse(request.params.email);
+  } catch (error) {
+    return response.status(400).json(fromZodError(error));
   }
 
   try {
@@ -108,13 +98,15 @@ async function update(_request, response) {
   }
 }
 
-async function del(_request, response) {
+async function del(request, response) {
   const emailSchema = z.string().email();
 
-  const email = _request.query.email;
+  let email;
 
-  if (!emailSchema.safeParse(email).success) {
-    return response.status(400).json({ error: 'Malformed Email!' });
+  try {
+    email = emailSchema.parse(request.params.email);
+  } catch (error) {
+    response.status(400).json(fromZodError(error));
   }
 
   try {

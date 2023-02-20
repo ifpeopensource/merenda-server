@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../PrismaClient.js';
 
-const prisma = new PrismaClient();
+import { EntryExists } from '../errors/EntryExists.js';
 
 async function findAll() {
   const students = await prisma.student.findMany();
@@ -9,11 +9,18 @@ async function findAll() {
 }
 
 async function add(data) {
-  const student = await prisma.student.create({
-    data: data,
-  });
-
-  return student;
+  try {
+    const student = await prisma.student.create({
+      data: data,
+    });
+    return student;
+  } catch (error) {
+    if (error.code == 'P2002') {
+      throw new EntryExists();
+    } else {
+      throw error;
+    }
+  }
 }
 
 async function read(query, type) {

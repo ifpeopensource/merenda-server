@@ -10,12 +10,14 @@ routes.use(StudentMiddleware);
 
 routes.get('/students', StudentController.list);
 
-routes.post('/students/add', StudentController.add);
+routes.post('/students', StudentController.add);
 
-routes.get('/students/read', StudentController.read);
+routes.get('/students/:id', StudentController.read);
 
-routes.put('/students/update', StudentController.update);
+routes.get('/students/find-by-email', StudentController.find);
 
-routes.delete('/students/delete', StudentController.del);
+routes.put('/students/:id', StudentController.update);
+
+routes.delete('/students/:id', StudentController.del);
 
 export default routes;

@@ -1,11 +1,20 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../PrismaClient.js';
 
-const prisma = new PrismaClient();
+import { EntryExists } from '../errors/EntryExists.js';
 
 async function add(data) {
-  const user = await prisma.user.create({
-    data: data,
-  });
+  let user;
+  try {
+    user = await prisma.user.create({
+      data: data,
+    });
+  } catch (error) {
+    if (error.code == 'P2002') {
+      throw new EntryExists();
+    } else {
+      throw error;
+    }
+  }
 
   return user;
 }

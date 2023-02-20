@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-const StudentMiddleware = (_request, response, next) => {
-  const authHeader = _request.headers.authorization;
+const StudentMiddleware = (request, response, next) => {
+  const authHeader = request.headers.authorization;
 
   if (!authHeader) {
     return response.status(401).json({ error: 'Missing authorization header' });
@@ -14,8 +14,8 @@ const StudentMiddleware = (_request, response, next) => {
       return response.status(401).json({ error: 'Invalid access token' });
     }
 
-    _request.userid = decoded.id;
-    _request.role = decoded.role;
+    request.userid = decoded.id;
+    request.role = decoded.role;
     next();
   });
 };

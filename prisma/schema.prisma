@@ -15,9 +15,11 @@ model Student {
     name      String
     email     String   @unique
     picUrl    String
-    User      User?
+    user      User?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    @@map("students")
 }
 
 model User {
@@ -30,6 +32,8 @@ model User {
     role        Role     @default(VERIFIER)
     createdAt   DateTime @default(now()) 
     updatedAt   DateTime @updatedAt
+
+    @@map("users")
 }
 
 enum Role {
