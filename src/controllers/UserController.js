@@ -39,7 +39,7 @@ async function add(request, response) {
     if (error instanceof EntryExists) {
       return response.status(400).json({ error: { message: error.message } });
     } else {
-      console.error('Internal Server Error' + error);
+      console.error('Internal Server Error: ' + error);
       return response.sendStatus(500);
     }
   }
