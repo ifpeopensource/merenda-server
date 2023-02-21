@@ -11,9 +11,8 @@ async function list(request, response) {
     const students = await StudentService.findAll();
     return response.json(students);
   } catch (error) {
-    return response.status(500).json({
-      error: { message: 'Internal Server Error', details: error.message },
-    });
+    console.error('Internal Server Error' + error);
+    return response.sendStatus(500);
   }
 }
 
@@ -49,9 +48,8 @@ async function add(request, response) {
     if (error instanceof EntryExists) {
       return response.status(400).json({ error: { message: error.message } });
     } else {
-      return response.status(500).json({
-        error: { message: 'Internal Server Error', details: error.message },
-      });
+      console.error('Internal Server Error' + error);
+      return response.sendStatus(500);
     }
   }
 }
