@@ -458,6 +458,7 @@ components:
         id:
           type: string
           format: studentId
+          pattern: ^\d{5}.{2,6}\d{4}$
           description: Matrícula do estudante
         name:
           type: string
@@ -594,6 +595,7 @@ components:
       schema:
         type: string
         format: studentId
+        pattern: ^\d{5}.{2,6}\d{4}$
       required: true
 
   requestBodies:
@@ -615,7 +617,11 @@ components:
               password:
                 type: string
                 format: password
-                description: Senha do usuário
+                pattern: "^(?=.*[0-9])(?=.*[-?/|{}=!@#$%^&*]).{8,32}$"
+                description: |
+                  Senha do usuário.
+
+                  Precisa ter entre 8 e 32 caracteres, pelo menos uma letra, um número e um caractere especial.
               role:
                 $ref: "#/components/schemas/Role"
 
@@ -636,6 +642,7 @@ components:
               id:
                 type: string
                 format: studentId
+                pattern: ^\d{5}.{2,6}\d{4}$
                 description: Matrícula do estudante
               email:
                 type: string
@@ -677,6 +684,7 @@ components:
               studentId:
                 type: string
                 format: studentId
+                pattern: ^\d{5}.{2,6}\d{4}$
                 nullable: true
                 description: Matrícula do estudante, caso o usuário seja um estudante
               role:
