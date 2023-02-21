@@ -37,7 +37,7 @@ async function login(request, response) {
     }
     return response
       .status(500)
-      .json({ error: { message: error.message, details: error } });
+      .json({ error: { message: "Internal Server Error", details: error.message } });
   }
 }
 
