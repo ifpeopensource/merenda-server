@@ -755,24 +755,6 @@ components:
 
     InternalServerError:
       description: Erro interno do servidor
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: Mensagem de erro
-                  details:
-                    type: string
-                    description: Detalhes do erro
-            example:
-              error:
-                message: Internal server error
-                details: "Error: Internal server error"
 
     ForbiddenError:
       description: Acesso negado. O usuário não tem permissão para realizar esta ação.
