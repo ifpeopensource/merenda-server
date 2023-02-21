@@ -15,6 +15,8 @@
     -->
     <style>
       body {
+        background-color: #151514;
+        font-family: 'Roboto', sans-serif;
         margin: 0;
         padding: 0;
       }
@@ -23,10 +25,272 @@
       img[alt='IFPE Open Source'] {
         padding: 16px;
       }
+
+      div.redoc-wrap {
+        background-color: #151514;
+      }
+
+      h5  {
+        color: #B5B5B5 !important;
+      }
+
+      .react-tabs__tab--selected:not(.tab-success):not(.tab-error) {
+        color: #00ae47 !important;
+      }
+
+
+      @media (prefers-color-scheme: light) {
+        body {
+          background-color: #fafafa;
+        }
+
+
+        div.redoc-wrap {
+          background-color: #fafafa;
+        }
+      }
+
+      a.darkAnchorIcon::before {
+        background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxwYXRoIGZpbGw9IiNmYWZhZmEiIGQ9Ik00NTkuNyAyMzMuNGwtOTAuNSA5MC41Yy01MCA1MC0xMzEgNTAtMTgxIDAtNy45LTcuOC0xNC0xNi43LTE5LjQtMjUuOGw0Mi4xLTQyLjFjMi0yIDQuNS0zLjIgNi44LTQuNSAyLjkgOS45IDggMTkuMyAxNS44IDI3LjIgMjUgMjUgNjUuNiAyNC45IDkwLjUgMGw5MC41LTkwLjVjMjUtMjUgMjUtNjUuNiAwLTkwLjUtMjQuOS0yNS02NS41LTI1LTkwLjUgMGwtMzIuMiAzMi4yYy0yNi4xLTEwLjItNTQuMi0xMi45LTgxLjYtOC45bDY4LjYtNjguNmM1MC01MCAxMzEtNTAgMTgxIDAgNDkuOCA0OS45IDQ5LjggMTMxLS4xIDE4MXpNMjIwLjMgMzgyLjJsLTMyLjIgMzIuMmMtMjUgMjQuOS02NS42IDI0LjktOTAuNSAwLTI1LTI1LTI1LTY1LjYgMC05MC41bDkwLjUtOTAuNWMyNS0yNSA2NS41LTI1IDkwLjUgMCA3LjggNy44IDEyLjkgMTcuMiAxNS44IDI3LjEgMi40LTEuNCA0LjgtMi41IDYuOC00LjVsNDIuMS00MmMtNS40LTkuMi0xMS42LTE4LTE5LjQtMjUuOC01MC01MC0xMzEtNTAtMTgxIDBsLTkwLjUgOTAuNWMtNTAgNTAtNTAgMTMxIDAgMTgxczEzMSA1MCAxODEgMGw2OC42LTY4LjZjLTI3LjQgNC01NS42IDEuMi04MS43LTguOXoiLz48L3N2Zz4=");
+      }
     </style>
   </head>
   <body>
-    <redoc spec-url="swagger.yaml"></redoc>
+    <div id="redoc-app"></div>
     <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+    <script>
+
+      let extendedTheme = {};
+      let redocTheme = {};
+      let colorScheme = 'dark';
+
+      const extendedDarkTheme = {
+        seeMoreGradientColor: '#151514',
+        expandArrowColor: '#E5E5E5',
+        schemaTypeColor: '#FFFFFF',
+        innerNestedSchemaBackground: '#151514',
+      }
+
+      const extendedLightTheme = {
+        seeMoreGradientColor: '#FAFAFA',
+        expandArrowColor: '#303030',
+        innerNestedSchemaBackground: '#FAFAFA',
+      }
+
+      const redocDarkTheme = {
+        spacing: {
+          unit: 4,
+        },
+        typography: {
+          code: {
+            backgroundColor: '#303030',
+          }
+        },
+        schema: {
+          nestedBackground: '#303030',
+        },
+        colors: {
+          primary: {
+            main: '#00ae47',
+          },
+          text: {
+            primary: '#f5f5f5',
+          },
+          gray:{
+            100: '#303030'
+          },
+        },
+        rightPanel: {
+          backgroundColor: '#303030',
+        },
+        sidebar: {
+          backgroundColor: '#303030',
+          textColor: '#f5f5f5',
+          activeTextColor: '#00ae47',
+        },
+        fab: {
+          backgroundColor: '#303030',
+          color: '#00ae47',
+        },
+      }
+
+      const redocLightTheme = {
+        spacing: {
+          unit: 4,
+        },
+        typography: {
+          code: {
+            backgroundColor: '#E5E5E5',
+          }
+        },
+        schema: {
+          nestedBackground: '#E5E5E5',
+        },
+        colors: {
+          primary: {
+            main: '#00ae47',
+          },
+          text: {
+            primary: '#151514',
+          },
+        },
+        sidebar: {
+          backgroundColor: '#E5E5E5',
+          textColor: '#151514',
+          activeTextColor: '#00ae47',
+        },
+        fab: {
+          backgroundColor: '#f2f2f2',
+          color: '#00ae47',
+        },
+      }
+
+      if (window.matchMedia) {
+        // Check if the dark-mode Media-Query matches
+        if(window.matchMedia('(prefers-color-scheme: light)').matches){
+          // Light
+          extendedTheme = extendedLightTheme;
+          redocTheme = redocLightTheme;
+          colorScheme = 'light';
+        } else {
+          // Dark
+          extendedTheme = extendedDarkTheme;
+          redocTheme = redocDarkTheme;
+          colorScheme = 'dark';
+        }
+      } else {
+        // Fallback - Dark
+        extendedTheme = extendedDarkTheme;
+        redocTheme = redocDarkTheme;
+        colorScheme = 'dark';
+      }
+
+      const redocOptions = {
+        downloadFileName: 'merenda-server-swagger.yaml',
+        // pathInMiddlePanel: true,
+        theme: redocTheme,
+      };
+
+      Redoc.init('swagger.yaml', redocOptions, document.getElementById('redoc-app'), redocInitialized);
+
+      function redocInitialized(err) {
+        if (err) {
+          console.error(err);
+          return;
+        }
+
+        const elementsToWatch = [
+          {
+            query: 'a',
+            forever: true,
+            filter(els) {
+              return Array.from(els).filter(el => el.textContent === 'See more');
+            },
+            callback(els) {
+              els.forEach(el => {
+                el.parentElement.style.backgroundImage = `linear-gradient(transparent, ${extendedTheme.seeMoreGradientColor})`;
+              })
+            }
+          },
+          {
+            query: 'h5',
+            forever: true,
+            filter(els) {
+              return Array.from(els).filter(
+                (el) => ['request body schema', 'response schema'].filter(
+                      (text) => el.innerText.toLowerCase().includes(text)
+                    ).length > 0
+                );
+            },
+            callback(els) {
+              els.forEach(el => {
+                el.firstElementChild.style.color = extendedTheme.schemaTypeColor;
+              })
+            }
+          },
+          {
+            query: 'polygon',
+            filter(els) {
+              return Array.from(els).filter(el => el.getAttribute('points') === '17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 ');
+            },
+            callback(els) {
+              els.forEach(el => {
+                el.style.fill = extendedTheme.expandArrowColor;
+              })
+            }
+          },
+          {
+            query: 'tbody>tr>td>div>table>tbody>tr>td>div>table',
+            filter(els) {
+              return Array.from(els);
+            },
+            callback(els) {
+              els.forEach(el => {
+                el.parentElement.style.backgroundColor = extendedTheme.innerNestedSchemaBackground;
+              })
+            }
+          },
+          {
+            query: 'h5 + div > div > button',
+            forever: true,
+            filter(els) {
+              return Array.from(els)
+            },
+            callback(els) {
+              els.forEach(el => {
+                el.style.fontWeight = "bold";
+                el.style.fontSize = "12px";
+              })
+            }
+          },
+          {
+            query: 'img[src="https://raw.githubusercontent.com/ifpeopensource/.github/ff4b9f3fe9da65872eb3d841d89a3b1009fa618f/assets/logotype_horizontal_light.svg"]',
+            filter(els) {
+              return Array.from(els)
+            },
+            callback(els) {
+              els.forEach(el => {
+                el.src = `https://raw.githubusercontent.com/ifpeopensource/.github/ff4b9f3fe9da65872eb3d841d89a3b1009fa618f/assets/logotype_horizontal_${colorScheme === 'dark' ? 'light' : 'dark'}.svg`;
+              })
+            }
+          },
+          {
+            query: 'a',
+            filter(els) {
+              if (colorScheme !== 'dark') return [];
+              return Array.from(els).filter(el => window.getComputedStyle(el, ':before').backgroundImage === `url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMCIgeT0iMCIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsPSIjMDEwMTAxIiBkPSJNNDU5LjcgMjMzLjRsLTkwLjUgOTAuNWMtNTAgNTAtMTMxIDUwLTE4MSAwIC03LjktNy44LTE0LTE2LjctMTkuNC0yNS44bDQyLjEtNDIuMWMyLTIgNC41LTMuMiA2LjgtNC41IDIuOSA5LjkgOCAxOS4zIDE1LjggMjcuMiAyNSAyNSA2NS42IDI0LjkgOTAuNSAwbDkwLjUtOTAuNWMyNS0yNSAyNS02NS42IDAtOTAuNSAtMjQuOS0yNS02NS41LTI1LTkwLjUgMGwtMzIuMiAzMi4yYy0yNi4xLTEwLjItNTQuMi0xMi45LTgxLjYtOC45bDY4LjYtNjguNmM1MC01MCAxMzEtNTAgMTgxIDBDNTA5LjYgMTAyLjMgNTA5LjYgMTgzLjQgNDU5LjcgMjMzLjR6TTIyMC4zIDM4Mi4ybC0zMi4yIDMyLjJjLTI1IDI0LjktNjUuNiAyNC45LTkwLjUgMCAtMjUtMjUtMjUtNjUuNiAwLTkwLjVsOTAuNS05MC41YzI1LTI1IDY1LjUtMjUgOTAuNSAwIDcuOCA3LjggMTIuOSAxNy4yIDE1LjggMjcuMSAyLjQtMS40IDQuOC0yLjUgNi44LTQuNWw0Mi4xLTQyYy01LjQtOS4yLTExLjYtMTgtMTkuNC0yNS44IC01MC01MC0xMzEtNTAtMTgxIDBsLTkwLjUgOTAuNWMtNTAgNTAtNTAgMTMxIDAgMTgxIDUwIDUwIDEzMSA1MCAxODEgMGw2OC42LTY4LjZDMjc0LjYgMzk1LjEgMjQ2LjQgMzkyLjMgMjIwLjMgMzgyLjJ6Ii8+PC9zdmc+Cg==")`);
+            },
+            callback(els) {
+              els.forEach(el => {
+                el.classList.add('darkAnchorIcon');
+              })
+            }
+          }
+        ];
+
+        function watchElements(elementsToWatch) {
+          elementsToWatch.forEach(element => {
+            const elements = document.querySelectorAll(element.query);
+            const filteredElements = element.filter(elements);
+
+            if (filteredElements.length > 0) {
+              if(!element.forever){
+                elementsToWatch = elementsToWatch.filter(el => el !== element);
+              }
+              element.callback(filteredElements);
+            }
+          })
+
+          if (elementsToWatch.length === 0) {
+            return;
+          } else {
+            setTimeout(() => watchElements(elementsToWatch), 50);
+          }
+        }
+
+        watchElements(elementsToWatch);
+      }
+
+    </script>
   </body>
 </html>
