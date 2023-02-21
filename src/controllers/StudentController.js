@@ -4,7 +4,7 @@ import { EntryExists } from '../errors/EntryExists.js';
 
 import StudentService from '../services/StudentService.js';
 
-import { sendStudentQRCodeEmail } from '../infra/email/views/sendStudentQRCodeEmail.js'
+import { sendStudentQRCodeEmail } from '../infra/email/views/sendStudentQRCodeEmail.js';
 import generateFormattedError from '../utils/generateFormattedError.js';
 
 async function list(request, response) {
