@@ -20,7 +20,7 @@ info:
     name: MIT
     url: https://github.com/ifpeopensource/merenda-server/blob/55c2a2bf85f99681a9c7df568e1e2bedbaac8b74/LICENSE
   x-logo:
-    url: "https://raw.githubusercontent.com/ifpeopensource/.github/ff4b9f3fe9da65872eb3d841d89a3b1009fa618f/assets/logotype_horizontal_dark.svg"
+    url: "https://raw.githubusercontent.com/ifpeopensource/.github/ff4b9f3fe9da65872eb3d841d89a3b1009fa618f/assets/logotype_horizontal_light.svg"
     altText: IFPE Open Source
 
 externalDocs:
