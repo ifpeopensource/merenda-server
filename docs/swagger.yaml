@@ -760,7 +760,7 @@ components:
       description: Acesso negado. O usuário não tem permissão para realizar esta ação.
 
     UnauthorizedError:
-      description: Token de acesso não informado, inválido ou o usuário não tem permissão para realizar esta ação
+      description: Token de acesso não informado ou inválido.
       content:
         application/json:
           schema:
