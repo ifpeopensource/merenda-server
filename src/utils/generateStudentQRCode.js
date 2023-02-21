@@ -5,8 +5,8 @@ import { createCanvas, loadImage } from 'canvas';
 export async function generateStudentQRCode(studentId, base64Image) {
   const qrCodeOptions = {
     errorCorrectionLevel: 'H',
-    width: 256,
-    color: { dark: '#000000', light: '#ffffff' },
+    width: 600,
+    color: { dark: '#1B5A26', light: '#FFFFFF' },
   };
   const qrCodeDataUrl = await qrcode.toDataURL(studentId, qrCodeOptions);
 
@@ -14,14 +14,12 @@ export async function generateStudentQRCode(studentId, base64Image) {
   const context = canvas.getContext('2d');
 
   const base64ImageDimensions = {
-    width: qrCodeOptions.width * 0.3,
-    height: qrCodeOptions.width * 0.3,
+    width: qrCodeOptions.width * 0.245,
+    height: qrCodeOptions.width * 0.245,
   };
 
-  const [qrCodeImageCanvasElement, base64ImageCanvasElement] = Promise.all([
-    loadImage(qrCodeDataUrl),
-    loadImage(base64Image),
-  ]);
+  const [qrCodeImageCanvasElement, base64ImageCanvasElement] =
+    await Promise.all([loadImage(qrCodeDataUrl), loadImage(base64Image)]);
 
   context.drawImage(
     qrCodeImageCanvasElement,
@@ -59,6 +57,14 @@ export async function generateStudentQRCode(studentId, base64Image) {
       (rectangleCoords.height - base64ImageDimensions.height) / 2,
     base64ImageDimensions.width,
     base64ImageDimensions.height
+  );
+
+  context.fillStyle = '#c8191e';
+  context.fillRect(
+    qrCodeOptions.width * 0.185,
+    qrCodeOptions.width * 0.185,
+    qrCodeOptions.width * 0.09,
+    qrCodeOptions.width * 0.09
   );
 
   return canvas.toDataURL();

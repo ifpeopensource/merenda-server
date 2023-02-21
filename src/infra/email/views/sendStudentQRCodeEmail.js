@@ -1,8 +1,14 @@
+import { readFile } from 'fs/promises';
+
 import mailing from '../nodemailer.js';
 
 import { generateStudentQRCode } from '../../../utils/generateStudentQRCode.js';
 
-import { IFOSBase64Logo } from '../assets/IFOSBase64Logo';
+const IFOSBase64Logo = JSON.parse(
+  await readFile(
+    new URL('../../../assets/IFOSBase64Logo.json', import.meta.url)
+  )
+).IFOSBase64Logo;
 
 async function sendStudentQRCodeEmail(studentData) {
   const QRCode = await generateStudentQRCode(studentData.id, IFOSBase64Logo);
@@ -12,12 +18,19 @@ async function sendStudentQRCodeEmail(studentData) {
     from: process.env.EMAIL_USER,
     to: studentData.email,
     subject: 'QRCode',
-    html: '<p>Este é o seu QRCode:</p><img src="cid:student_qr_code@ifpeopensource.com.br" alt="QR code">',
+    template: 'email',
+    context: {
+      name: studentFirstName,
+    },
     attachments: [
       {
         filename: `${studentFirstName} - ${studentData.id}.png`,
         content: Buffer.from(QRCode.split(',')[1], 'base64'),
         cid: 'student_qr_code@ifpeopensource.com.br',
+      },
+      {
+        filename: `${studentFirstName} - ${studentData.id}.png`,
+        content: Buffer.from(QRCode.split(',')[1], 'base64'),
       },
     ],
   };
@@ -25,4 +38,4 @@ async function sendStudentQRCodeEmail(studentData) {
   await mailing.sendEmail(message);
 }
 
-export default { sendStudentQRCodeEmail };
+export { sendStudentQRCodeEmail };
