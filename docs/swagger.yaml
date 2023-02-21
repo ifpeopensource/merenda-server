@@ -1,0 +1,783 @@
+openapi: 3.0.0
+info:
+  title: Merenda (server)
+  description: |
+    Servidor da aplicação de entrega da merenda escolar do IFPE - Campus Recife.
+
+    [Acessar documentação Swagger UI](./swagger-ui.html)
+
+    # Autenticação
+
+    Para acessar os endpoints protegidos, é necessário autenticação.
+    <SecurityDefinitions />
+
+  version: 1.0.0
+  contact:
+    name: IFPE Open Source
+    email: oi@ifpeopensource.com.br
+    url: https://ifpeopensource.com.br
+  license:
+    name: MIT
+    url: https://github.com/ifpeopensource/merenda-server/blob/55c2a2bf85f99681a9c7df568e1e2bedbaac8b74/LICENSE
+  x-logo:
+    url: "https://raw.githubusercontent.com/ifpeopensource/.github/ff4b9f3fe9da65872eb3d841d89a3b1009fa618f/assets/logotype_horizontal_dark.svg"
+    altText: IFPE Open Source
+
+externalDocs:
+  description: README no GitHub
+  url: https://github.com/ifpeopensource/merenda-server#readme
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desenvolvimento
+
+tags:
+  - name: users
+    x-displayName: Usuários
+    description: Operações relacionadas a usuários
+  - name: students
+    x-displayName: Estudantes
+    description: Operações relacionadas a estudantes
+  - name: roles
+    x-displayName: Tipos de Usuário
+    description: <SchemaDefinition schemaRef="#/components/schemas/Role" />
+
+paths:
+  /users:
+    post:
+      operationId: Criar Usuário
+      description: Cria um novo usuário.
+      tags:
+        - users
+      security:
+        - OAuth:
+            - ADMIN
+      requestBody:
+        $ref: "#/components/requestBodies/UserData"
+
+      responses:
+        "201":
+          $ref: "#/components/responses/UserData"
+
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Erro de Validação'
+                  - $ref: '#/components/schemas/Usuário Já Existe'
+
+              examples:
+                Erro de Validação de Dados:
+                  value:
+                      error:
+                        message: "Validation error: Password too weak! at \"password\"; Invalid email at \"email\"; Expected string, received number at \"name\""
+                        details:
+                          issues:
+                            - code: invalid_string
+                              validation: regex
+                              path: ["password"]
+                              message: Password too weak!
+                            - code: invalid_string
+                              validation: email
+                              path: ["email"]
+                              message: Invalid email
+                            - code: invalid_type
+                              expected: string
+                              received: number
+                              path: ["name"]
+                              message: Expected string, received number
+                          name: ZodError
+
+                Usuário Já Existe:
+                  value:
+                    error:
+                      message: User already exists in database!
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /users/{email}:
+    get:
+      operationId: Encontrar Usuário
+      description: Retorna dados de um usuário pelo seu e-mail.
+      tags:
+        - users
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/userEmail"
+
+      responses:
+        "200":
+          $ref: "#/components/responses/UserData"
+
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    put:
+      description: Atualiza dados de um usuário.
+      operationId: Atualizar Usuário
+      tags:
+        - users
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/userEmail"
+
+      requestBody:
+        $ref: "#/components/requestBodies/UserData"
+
+      responses:
+        "200":
+          $ref: "#/components/responses/UserData"
+
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    delete:
+      description: Deleta usuário.
+      operationId: Deletar Usuário
+      tags:
+        - users
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/userEmail"
+
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /students:
+    get:
+      description: Retorna uma lista de estudantes.
+      operationId: Listar Estudantes
+      tags:
+        - students
+      security:
+        - OAuth:
+            - VERIFIER
+      responses:
+        "200":
+          description: Lista de estudantes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    post:
+      description: Cria um novo estudante.
+      operationId: Criar Estudante
+      tags:
+        - students
+      security:
+        - OAuth:
+            - ADMIN
+      requestBody:
+        $ref: "#/components/requestBodies/StudentData"
+
+      responses:
+        "201":
+          $ref: "#/components/responses/StudentData"
+
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Erro de Validação'
+                  - $ref: '#/components/schemas/Estudante Já Existe'
+
+              examples:
+                Erro de Validação de Dados:
+                  value:
+                      error:
+                        message: "Validation error: Invalid email at \"email\"; Expected string, received number at \"name\""
+                        details:
+                          issues:
+                            - code: invalid_string
+                              validation: email
+                              path: ["email"]
+                              message: Invalid email
+                            - code: invalid_type
+                              expected: string
+                              received: number
+                              path: ["name"]
+                              message: Expected string, received number
+                          name: ZodError
+
+                Estudante Já Existe:
+                  value:
+                    error:
+                      message: Student already exists in database!
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /students/{id}:
+    get:
+      description: Retorna dados de um estudante pela sua matrícula.
+      operationId: Encontrar Estudante por Matrícula
+      tags:
+        - students
+      security:
+        - OAuth:
+            - VERIFIER
+      parameters:
+        - $ref: "#/components/parameters/studentId"
+
+      responses:
+        "200":
+          $ref: "#/components/responses/StudentData"
+
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    put:
+      description: Atualiza dados de um estudante.
+      operationId: Atualizar Estudante
+      tags:
+        - students
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/studentId"
+
+      requestBody:
+        description: Dados do estudante
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: E-mail do estudante
+                name:
+                  type: string
+                  description: Nome do estudante
+                picUrl:
+                  type: string
+                  format: uri
+
+            example:
+              email: example@discente.ifpe.edu.br
+              name: John Doe
+              picUrl: https://picsum.photos/200
+
+      responses:
+        "200":
+          $ref: "#/components/responses/UserData"
+
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    delete:
+      description: Deleta estudante.
+      operationId: Deletar Estudante
+      tags:
+        - students
+      security:
+        - OAuth:
+            - ADMIN
+      parameters:
+        - $ref: "#/components/parameters/studentId"
+
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /students/find-by-email:
+    get:
+      description: Retorna dados de um estudante pelo seu E-mail.
+      operationId: Encontrar Estudante por E-mail
+      tags:
+        - students
+      security:
+        - OAuth:
+            - VERIFIER
+      parameters:
+        - in: query
+          name: email
+          schema:
+            type: string
+            format: email
+          required: true
+          description: E-mail do estudante
+
+      responses:
+        "200":
+          $ref: "#/components/responses/StudentData"
+
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  securitySchemes:
+    OAuth:
+      description: |
+        Para acessar certos endpoints, é necessário se autenticar com o OAuth2.0.
+
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://localhost:3000/oauth/login
+          scopes:
+            "ADMIN": Permissões de administrador
+            "VERIFIER": Permissões de verificador
+            "USER": Permissões de usuário
+
+  schemas:
+    StudentData:
+      description: |
+        Dados de um estudante.
+      type: object
+      properties:
+        id:
+          type: string
+          format: studentId
+          pattern: ^\d{5}.{2,6}\d{4}$
+          description: Matrícula do estudante
+        name:
+          type: string
+          description: Nome do estudante
+        email:
+          type: string
+          format: email
+          description: E-mail do estudante
+        picUrl:
+          type: string
+          format: uri
+          description: URL da foto do estudante
+        createdAt:
+          type: string
+          format: date-time
+          description: Data de criação do estudante
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data de atualização do estudante
+
+    Role:
+      description: |
+        Tipos de usuário na aplicação. Cada usuário possui permissões diferentes.
+      type: string
+      enum:
+        - "ADMIN"
+        - "VERIFIER"
+        - "USER"
+
+    ZodInvalidValueTypeIssue:
+      type: object
+      properties:
+        code:
+          type: string
+          enum: [invalid_type]
+        expected:
+          type: string
+          description: Tipo esperado
+        received:
+          type: string
+          description: Tipo recebido
+        path:
+          type: array
+          description: Campos com erro
+          items:
+            type: string
+        message:
+          description: Mensagem de erro do Zod
+          type: string
+
+    ZodInvalidValue:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Código do erro
+          example: invalid_string
+        path:
+          type: array
+          description: Campos com erro
+          items:
+            type: string
+        validation:
+          type: string
+          description: Validação que falhou
+          example:
+            - regex
+            - email
+        message:
+          description: Mensagem de erro do Zod
+          type: string
+
+    Erro de Validação:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+            details:
+              type: object
+              description: Detalhes do erro
+              properties:
+                issues:
+                  type: array
+                  description: Lista de erros
+                  items:
+                    anyOf:
+                      - $ref: "#/components/schemas/ZodInvalidValueTypeIssue"
+                      - $ref: "#/components/schemas/ZodInvalidValue"
+                name:
+                  type: string
+                  enum: [ZodError]
+
+    Usuário Já Existe:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+              enum: [User already exists in database!]
+
+    Estudante Já Existe:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+              enum: [Student already exists in database!]
+
+  parameters:
+    userEmail:
+      name: email
+      description: E-mail do usuário
+      required: true
+      in: path
+      schema:
+        type: string
+        format: email
+
+    studentId:
+      name: id
+      description: Matrícula do estudante
+      in: path
+      schema:
+        type: string
+        format: studentId
+        pattern: ^\d{5}.{2,6}\d{4}$
+      required: true
+
+  requestBodies:
+    UserData:
+      description: Dados do usuário
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                description: E-mail do usuário
+              name:
+                type: string
+                description: Nome do usuário
+              password:
+                type: string
+                format: password
+                pattern: "^(?=.*[0-9])(?=.*[-?/|{}=!@#$%^&*]).{8,32}$"
+                description: |
+                  Senha do usuário.
+
+                  Precisa ter entre 8 e 32 caracteres, pelo menos uma letra, um número e um caractere especial.
+              role:
+                $ref: "#/components/schemas/Role"
+
+          example:
+            email: example@ifpeopensource.com.br
+            name: John Doe
+            password: str&ngPass1
+            role: ADMIN
+
+    StudentData:
+      description: Dados do estudante
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                format: studentId
+                pattern: ^\d{5}.{2,6}\d{4}$
+                description: Matrícula do estudante
+              email:
+                type: string
+                format: email
+                description: E-mail do estudante
+              name:
+                type: string
+                description: Nome do estudante
+              picUrl:
+                type: string
+                format: uri
+                description: URL da foto do estudante
+
+          example:
+            id: 20231H61RC1234
+            email: example@discente.ifpe.edu.br
+            name: John Doe
+            picUrl: https://picsum.photos/200
+
+  responses:
+    UserData:
+      description: Dados do usuário
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                format: cuid
+                description: ID do usuário
+              name:
+                type: string
+                description: Nome do usuário
+              email:
+                type: string
+                format: email
+                description: E-mail do usuário
+              studentId:
+                type: string
+                format: studentId
+                pattern: ^\d{5}.{2,6}\d{4}$
+                nullable: true
+                description: Matrícula do estudante, caso o usuário seja um estudante
+              role:
+                $ref: "#/components/schemas/Role"
+              createdAt:
+                type: string
+                format: date-time
+                description: Data de criação do usuário
+              updatedAt:
+                type: string
+                format: date-time
+                description: Data de atualização do usuário
+
+          example:
+            id: "cleaqjsco000asfvno6ibo33r"
+            name: John Doe
+            email: example@ifpeopensource.com.br
+            studentId: null
+            role: ADMIN
+            createdAt: 2023-02-19T21:08:59.271Z
+            updatedAt: 2023-02-19T21:08:59.271Z
+
+    StudentData:
+      description: Dados do estudante
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StudentData"
+
+          example:
+            id: "20231H61RC1234"
+            name: John Doe
+            email: example@ifpeopensource.com.br
+            picUrl: https://picsum.photos/200
+            createdAt: 2023-02-19T21:08:59.271Z
+            updatedAt: 2023-02-19T21:08:59.271Z
+
+    NoContent:
+      description: Sucesso. Sem conteúdo.
+
+    BadRequestValidation:
+      description: Requisição inválida. Erro de validação.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Erro de Validação'
+
+          examples:
+            Erro de Validação de Dados:
+              value:
+                  error:
+                    message: "Validation error: Invalid email at \"email\"; Expected string, received number at \"name\""
+                    details:
+                      issues:
+                        - code: invalid_string
+                          validation: email
+                          path: ["email"]
+                          message: Invalid email
+                        - code: invalid_type
+                          expected: string
+                          received: number
+                          path: ["name"]
+                          message: Expected string, received number
+                      name: ZodError
+
+    NotFound:
+      description: Não econtrado
+
+    InternalServerError:
+      description: Erro interno do servidor
+
+    ForbiddenError:
+      description: Acesso negado. O usuário não tem permissão para realizar esta ação.
+
+    UnauthorizedError:
+      description: Token de acesso não informado ou inválido.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensagem de erro
+          examples:
+            Token não informado:
+              value:
+                error:
+                  message: Missing authorization header
+            Token inválido:
+              value:
+                error:
+                  message: Invalid access token
