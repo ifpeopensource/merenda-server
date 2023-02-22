@@ -26,6 +26,7 @@
         padding: 16px;
       }
 
+      /* Center panel  */
       div.redoc-wrap {
         background-color: #151514;
       }
@@ -34,22 +35,46 @@
         color: #B5B5B5 !important;
       }
 
+      select {
+        background-color: #303030 !important;
+        color: #f5f5f5 !important;
+      }
+
+      /* Request endpoints wrapper */
+      div[aria-hidden] > div {
+        background-color: #303030 !important;
+        color: #f5f5f5 !important;
+      }
+
+      /* Request endpoints */
+      div[aria-hidden] > div > div + div > div {
+        background-color: #151514 !important;
+        border-color: #666666 !important;
+      }
+
+      /* Request endpoints route */
+      div[aria-hidden] > div > div + div > div > span {
+        color: #f5f5f5 !important;
+      }
+
+      /* anyOf / oneOf / allOf */
       .react-tabs__tab--selected:not(.tab-success):not(.tab-error) {
         color: #00ae47 !important;
       }
 
-
       @media (prefers-color-scheme: light) {
+        /* Light theme */
         body {
           background-color: #fafafa;
         }
 
-
+        /* Center panel  */
         div.redoc-wrap {
           background-color: #fafafa;
         }
       }
 
+      /* DeepLink icon */
       a.darkAnchorIcon::before {
         background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxwYXRoIGZpbGw9IiNmYWZhZmEiIGQ9Ik00NTkuNyAyMzMuNGwtOTAuNSA5MC41Yy01MCA1MC0xMzEgNTAtMTgxIDAtNy45LTcuOC0xNC0xNi43LTE5LjQtMjUuOGw0Mi4xLTQyLjFjMi0yIDQuNS0zLjIgNi44LTQuNSAyLjkgOS45IDggMTkuMyAxNS44IDI3LjIgMjUgMjUgNjUuNiAyNC45IDkwLjUgMGw5MC41LTkwLjVjMjUtMjUgMjUtNjUuNiAwLTkwLjUtMjQuOS0yNS02NS41LTI1LTkwLjUgMGwtMzIuMiAzMi4yYy0yNi4xLTEwLjItNTQuMi0xMi45LTgxLjYtOC45bDY4LjYtNjguNmM1MC01MCAxMzEtNTAgMTgxIDAgNDkuOCA0OS45IDQ5LjggMTMxLS4xIDE4MXpNMjIwLjMgMzgyLjJsLTMyLjIgMzIuMmMtMjUgMjQuOS02NS42IDI0LjktOTAuNSAwLTI1LTI1LTI1LTY1LjYgMC05MC41bDkwLjUtOTAuNWMyNS0yNSA2NS41LTI1IDkwLjUgMCA3LjggNy44IDEyLjkgMTcuMiAxNS44IDI3LjEgMi40LTEuNCA0LjgtMi41IDYuOC00LjVsNDIuMS00MmMtNS40LTkuMi0xMS42LTE4LTE5LjQtMjUuOC01MC01MC0xMzEtNTAtMTgxIDBsLTkwLjUgOTAuNWMtNTAgNTAtNTAgMTMxIDAgMTgxczEzMSA1MCAxODEgMGw2OC42LTY4LjZjLTI3LjQgNC01NS42IDEuMi04MS43LTguOXoiLz48L3N2Zz4=");
       }
