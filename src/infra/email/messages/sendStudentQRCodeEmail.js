@@ -35,7 +35,13 @@ async function sendStudentQRCodeEmail(studentData) {
     ],
   };
 
-  await mailing.sendEmail(message);
+  try {
+    await mailing.sendEmail(message);
+  } catch (error) {
+    console.error(
+      `Could not send student QR Code email to "${studentData.email}": ${error}`
+    );
+  }
 }
 
 export { sendStudentQRCodeEmail };
