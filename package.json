@@ -10,6 +10,15 @@
     "start": "node src/server.js",
     "lint": "eslint src --fix"
   },
+  "imports": {
+    "#routes/*": "./src/routes/*",
+    "#middlewares/*": "./src/middlewares/*",
+    "#controllers/*": "./src/controllers/*",
+    "#services/*": "./src/services/*",
+    "#errors/*": "./src/errors/*",
+    "#infra/*": "./src/infra/*",
+    "#utils/*": "./src/utils/*"
+  },
   "private": true,
   "license": "MIT",
   "dependencies": {
@@ -30,6 +39,7 @@
   "devDependencies": {
     "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.4",

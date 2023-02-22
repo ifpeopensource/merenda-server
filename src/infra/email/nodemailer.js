@@ -1,7 +1,8 @@
-import nodemailer from 'nodemailer';
-import hbs from 'nodemailer-express-handlebars';
 import path from 'node:path';
 import { URL } from 'node:url';
+
+import nodemailer from 'nodemailer';
+import hbs from 'nodemailer-express-handlebars';
 
 //https://stackoverflow.com/a/66651120
 var __dirname = new URL('.', import.meta.url).pathname;

@@ -1,6 +1,5 @@
-import qrcode from 'qrcode';
-
 import { createCanvas, loadImage } from 'canvas';
+import qrcode from 'qrcode';
 
 const QRCODE_OPTIONS = {
   errorCorrectionLevel: 'H',

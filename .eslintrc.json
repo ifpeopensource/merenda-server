@@ -3,15 +3,95 @@
     "es2021": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "prettier"],
+  "extends": ["eslint:recommended", "plugin:import/recommended", "prettier"],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "plugins": ["prettier"],
+  "settings": {
+    "import/extensions": [".js"]
+  },
   "rules": {
     "prettier/prettier": "error",
     "indent": ["error", 2],
-    "linebreak-style": ["error", "unix"]
+    "linebreak-style": ["error", "unix"],
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": [
+          "#routes",
+          "#middlewares",
+          "#controllers",
+          "#services",
+          "#errors",
+          "#infra",
+          "#utils"
+        ]
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index",
+          "object",
+          "type"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "#routes/**",
+            "group": "internal",
+            "position": "before"
+          },
+          {
+            "pattern": "#middlewares/**",
+            "group": "internal"
+          },
+          {
+            "pattern": "#controllers/**",
+            "group": "internal",
+            "position": "after"
+          },
+          {
+            "pattern": "#services/**",
+            "group": "parent",
+            "position": "before"
+          },
+          {
+            "pattern": "#errors/**",
+            "group": "parent"
+          },
+          {
+            "pattern": "#infra/**",
+            "group": "parent",
+            "position": "after"
+          },
+          {
+            "pattern": "#utils/**",
+            "group": "sibling",
+            "position": "before"
+          }
+        ],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "newlines-between": "always"
+      }
+    ],
+    "import/no-dynamic-require": "error",
+    "import/no-cycle": "error",
+    "import/no-absolute-path": "error",
+    "import/no-self-import": "error",
+    "import/no-useless-path-segments": "error",
+    "import/exports-last": "error",
+    "import/first": "error",
+    "import/group-exports": "error"
   }
 }

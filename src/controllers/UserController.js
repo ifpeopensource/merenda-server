@@ -1,11 +1,11 @@
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 
-import { EntryExists } from '../errors/EntryExists.js';
+import UserService from '#services/UserService.js';
 
-import UserService from '../services/UserService.js';
+import { EntryExists } from '#errors/EntryExists.js';
 
-import generateFormattedError from '../utils/generateFormattedError.js';
+import generateFormattedError from '#utils/generateFormattedError.js';
 
 async function add(request, response) {
   const emailSchema = z.string().email();

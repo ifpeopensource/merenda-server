@@ -1,14 +1,16 @@
+// eslint-disable-next-line import/order
 import dotenv from 'dotenv';
-dotenv.config();
 
-import express from 'express';
+// eslint-disable-next-line import/order
 import cors from 'cors';
+import express from 'express';
 
-import oauthRoutes from './routes/oauth.js';
-import studentsRoutes from './routes/students.js';
-import usersRoutes from './routes/users.js';
+import oauthRoutes from '#routes/oauth.js';
+import studentsRoutes from '#routes/students.js';
+import usersRoutes from '#routes/users.js';
 
-import { formattedSendStatus } from './utils/sendStatusJSONFormatter.js';
+import { formattedSendStatus } from '#utils/sendStatusJSONFormatter.js';
+dotenv.config();
 
 const app = express();
 app.response.sendStatus = formattedSendStatus;

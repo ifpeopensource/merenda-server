@@ -2,7 +2,7 @@ import fs from 'node:fs';
 
 import mailing from '../nodemailer.js';
 
-import { generateStudentQRCode } from '../../../utils/generateStudentQRCode.js';
+import { generateStudentQRCode } from '#utils/generateStudentQRCode.js';
 
 const IFOSBase64Logo = JSON.parse(
   fs.readFileSync(

@@ -1,9 +1,9 @@
 import express from 'express';
 
-import UserController from '../controllers/UserController.js';
+import AuthMiddleware from '#middlewares/AuthMiddleware.js';
+import RequireAdminMiddleware from '#middlewares/RequireAdminMiddleware.js';
 
-import AuthMiddleware from '../middlewares/AuthMiddleware.js';
-import RequireAdminMiddleware from '../middlewares/RequireAdminMiddleware.js';
+import UserController from '#controllers/UserController.js';
 
 const routes = express.Router();
 
