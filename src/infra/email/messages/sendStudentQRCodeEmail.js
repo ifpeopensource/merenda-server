@@ -1,11 +1,11 @@
-import { readFile } from 'fs/promises';
+import fs from 'node:fs';
 
 import mailing from '../nodemailer.js';
 
 import { generateStudentQRCode } from '../../../utils/generateStudentQRCode.js';
 
 const IFOSBase64Logo = JSON.parse(
-  await readFile(
+  fs.readFileSync(
     new URL('../../../assets/IFOSBase64Logo.json', import.meta.url)
   )
 ).IFOSBase64Logo;
