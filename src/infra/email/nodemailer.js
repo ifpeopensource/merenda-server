@@ -2,8 +2,6 @@ import nodemailer from 'nodemailer';
 import hbs from 'nodemailer-express-handlebars';
 import path from 'node:path';
 import { URL } from 'url';
-import dotenv from 'dotenv';
-dotenv.config();
 
 //https://stackoverflow.com/a/66651120
 var __dirname = new URL('.', import.meta.url).pathname;
