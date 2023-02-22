@@ -27,6 +27,14 @@ Servidor da aplicação de entrega da merenda escolar do IFPE - _Campus_ Recife.
 
 O projeto é feito em Node.js utilizando bibliotecas como o [Express](https://expressjs.com/) e o [Prisma](https://prisma.io/).
 
+### :book: Documentação
+
+A documentação da API pode ser encontrada [aqui](https://projetos.ifpeopensource.com.br/merenda-server/).
+
+Caso ocorra algum problema, existe também uma versão em [Swagger UI](https://projetos.ifpeopensource.com.br/merenda-server/swagger-ui.html).
+
+O arquivo OpenAPI da API pode ser encontrado em [`/docs/swagger.yaml`](/docs/swagger.yaml).
+
 ## 🚀 Como executar
 
 - Verifique se você tem o [Node.js](https://nodejs.org/en/) e o [Docker](https://docker.io/) instalados;
