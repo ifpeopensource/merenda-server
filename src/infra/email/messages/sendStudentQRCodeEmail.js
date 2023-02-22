@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises';
 
-import mailing from '../nodemailer.js';
+import mailing from './nodemailer.js';
 
 import { generateStudentQRCode } from '../../../utils/generateStudentQRCode.js';
 
@@ -17,20 +17,20 @@ async function sendStudentQRCodeEmail(studentData) {
   const message = {
     from: process.env.EMAIL_USER,
     to: studentData.email,
-    subject: 'QRCode',
-    template: 'email',
+    subject: 'Aqui está seu QR Code para receber a merenda!',
+    template: 'studentQRCodeEmail',
     context: {
       name: studentFirstName,
     },
     attachments: [
       {
         filename: `${studentFirstName} - ${studentData.id}.png`,
-        content: Buffer.from(QRCode.split(',')[1], 'base64'),
+        content: QRCode,
         cid: 'student_qr_code@ifpeopensource.com.br',
       },
       {
         filename: `${studentFirstName} - ${studentData.id}.png`,
-        content: Buffer.from(QRCode.split(',')[1], 'base64'),
+        content: QRCode,
       },
     ],
   };

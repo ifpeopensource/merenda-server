@@ -1,15 +1,26 @@
 import nodemailer from 'nodemailer';
 import hbs from 'nodemailer-express-handlebars';
-import path from 'path';
-
+import path from 'node:path';
+import { URL } from 'url';
 import dotenv from 'dotenv';
 dotenv.config();
+
+//https://stackoverflow.com/a/66651120
+var __dirname = new URL('.', import.meta.url).pathname;
+
+const HANDLEBARS_OPTIONS = {
+  viewEngine: {
+    extName: '.handlebars',
+    defaultLayout: false,
+  },
+  viewPath: path.resolve(__dirname, '..', 'views'),
+  extName: '.handlebars',
+};
 
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: process.env.EMAIL_PORT,
   secure: false,
-  ignoreTLS: true,
   service: process.env.EMAIL_SERVICE,
   auth: {
     user: process.env.EMAIL_USER,
@@ -17,25 +28,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const handlebarOptions = {
-  viewEngine: {
-    extName: '.handlebars',
-    partialDirs: path.resolve('./src/infra/email/views/layouts'),
-    defaultLayout: false,
-  },
-  viewPath: path.resolve('./src/infra/email/views/layouts'),
-  extName: '.handlebars',
-};
-
-transporter.use('compile', hbs(handlebarOptions));
+transporter.use('compile', hbs(HANDLEBARS_OPTIONS));
 
 async function sendEmail(message) {
   transporter.sendMail(message, (error) => {
     if (error) {
-      console.log(`E-mail não enviado, erro: ${error}`);
+      console.error('Could not send email to user, error: ', error);
       throw error;
-    } else {
-      console.log('IFOS - E-mail enviado para: ' + message.to);
     }
   });
 }
