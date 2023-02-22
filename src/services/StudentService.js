@@ -1,6 +1,5 @@
+import { EntryExists } from '#errors/EntryExists.js';
 import { prisma } from '../PrismaClient.js';
-
-import { EntryExists } from '../errors/EntryExists.js';
 
 const PRISMA_ERRORS = {
   alreadyExists: 'P2002',

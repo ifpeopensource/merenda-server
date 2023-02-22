@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
-import { InvalidPassword } from '../errors/InvalidPassword.js';
+import OauthService from '#services/OauthService.js';
+import UserService from '#services/UserService.js';
 
-import OauthService from '../services/OauthService.js';
-import UserService from '../services/UserService.js';
+import { InvalidPassword } from '#errors/InvalidPassword.js';
 
-import generateFormattedError from '../utils/generateFormattedError.js';
+import generateFormattedError from '#utils/generateFormattedError.js';
 
 async function login(request, response) {
   const emailSchema = z.string().email();

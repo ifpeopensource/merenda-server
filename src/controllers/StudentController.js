@@ -1,11 +1,12 @@
 import { z } from 'zod';
 
-import { EntryExists } from '../errors/EntryExists.js';
+import StudentService from '#services/StudentService.js';
 
-import StudentService from '../services/StudentService.js';
+import { EntryExists } from '#errors/EntryExists.js';
 
-import { sendStudentQRCodeEmail } from '../infra/email/messages/sendStudentQRCodeEmail.js';
-import generateFormattedError from '../utils/generateFormattedError.js';
+import { sendStudentQRCodeEmail } from '#infra/email/messages/sendStudentQRCodeEmail.js';
+
+import generateFormattedError from '#utils/generateFormattedError.js';
 
 async function list(request, response) {
   try {

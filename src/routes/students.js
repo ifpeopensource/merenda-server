@@ -1,10 +1,10 @@
 import express from 'express';
 
-import StudentController from '../controllers/StudentController.js';
+import AuthMiddleware from '#middlewares/AuthMiddleware.js';
+import RequireAdminMiddleware from '#middlewares/RequireAdminMiddleware.js';
+import RequireVerifierMiddleware from '#middlewares/RequireVerifierMiddleware.js';
 
-import AuthMiddleware from '../middlewares/AuthMiddleware.js';
-import RequireAdminMiddleware from '../middlewares/RequireAdminMiddleware.js';
-import RequireVerifierMiddleware from '../middlewares/RequireVerifierMiddleware.js';
+import StudentController from '#controllers/StudentController.js';
 
 const routes = express.Router();
 
