@@ -11,11 +11,10 @@ import usersRoutes from './routes/users.js';
 import { formattedSendStatus } from './utils/sendStatusJSONFormatter.js';
 
 const app = express();
+app.response.sendStatus = formattedSendStatus;
 
 app.use(cors());
 app.use(express.json());
-
-app.response.sendStatus = formattedSendStatus;
 
 app.use(oauthRoutes);
 app.use(studentsRoutes);
