@@ -32,17 +32,62 @@ servers:
     description: Servidor de desenvolvimento
 
 tags:
+  # Operations
   - name: users
     x-displayName: Usuários
     description: Operações relacionadas a usuários
   - name: students
     x-displayName: Estudantes
     description: Operações relacionadas a estudantes
+
+  # Models
   - name: roles
     x-displayName: Tipos de Usuário
-    description: <SchemaDefinition schemaRef="#/components/schemas/Role" />
+    description: |
+      Tipos de usuário na aplicação. Cada usuário possui permissões diferentes.
+      <SchemaDefinition schemaRef="#/components/schemas/Role" />
+  - name: user_data_model
+    x-displayName: Usuário
+    description: |
+      Dados do usuário que são retornados pela API.
+      <SchemaDefinition schemaRef="#/components/schemas/UserData" />
+  - name: student_data_model
+    x-displayName: Estudante
+    description: |
+      Dados do estudante que são retornados pela API.
+      <SchemaDefinition schemaRef="#/components/schemas/StudentData" />
+
+  # HTTP Errors
+  - name: bad_request
+    x-displayName: 400 Bad Request (Erro de validação)
+    description: |
+      Requisição inválida. Erro de validação dos dados enviados.
+      <SchemaDefinition schemaRef="#/components/schemas/Erro de Validação" />
+  - name: unauthorized
+    x-displayName: 401 Unauthorized
+    description: |
+      Token de acesso não informado ou inválido.
+      <SchemaDefinition schemaRef="#/components/schemas/UnauthorizedError" />
+
+x-tagGroups:
+  - name: Operações
+    tags:
+      - users
+      - students
+
+  - name: Models
+    tags:
+      - roles
+      - user_data_model
+      - student_data_model
+
+  - name: Erros HTTP
+    tags:
+      - bad_request
+      - unauthorized
 
 paths:
+  # Users
   /users:
     post:
       operationId: Criar Usuário
@@ -65,30 +110,30 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/Erro de Validação'
-                  - $ref: '#/components/schemas/Usuário Já Existe'
+                  - $ref: "#/components/schemas/Erro de Validação"
+                  - $ref: "#/components/schemas/Usuário Já Existe"
 
               examples:
                 Erro de Validação de Dados:
                   value:
-                      error:
-                        message: "Validation error: Password too weak! at \"password\"; Invalid email at \"email\"; Expected string, received number at \"name\""
-                        details:
-                          issues:
-                            - code: invalid_string
-                              validation: regex
-                              path: ["password"]
-                              message: Password too weak!
-                            - code: invalid_string
-                              validation: email
-                              path: ["email"]
-                              message: Invalid email
-                            - code: invalid_type
-                              expected: string
-                              received: number
-                              path: ["name"]
-                              message: Expected string, received number
-                          name: ZodError
+                    error:
+                      message: 'Validation error: Password too weak! at "password"; Invalid email at "email"; Expected string, received number at "name"'
+                      details:
+                        issues:
+                          - code: invalid_string
+                            validation: regex
+                            path: ["password"]
+                            message: Password too weak!
+                          - code: invalid_string
+                            validation: email
+                            path: ["email"]
+                            message: Invalid email
+                          - code: invalid_type
+                            expected: string
+                            received: number
+                            path: ["name"]
+                            message: Expected string, received number
+                        name: ZodError
 
                 Usuário Já Existe:
                   value:
@@ -198,6 +243,7 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
 
+  # Students
   /students:
     get:
       description: Retorna uma lista de estudantes.
@@ -247,26 +293,26 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/Erro de Validação'
-                  - $ref: '#/components/schemas/Estudante Já Existe'
+                  - $ref: "#/components/schemas/Erro de Validação"
+                  - $ref: "#/components/schemas/Estudante Já Existe"
 
               examples:
                 Erro de Validação de Dados:
                   value:
-                      error:
-                        message: "Validation error: Invalid email at \"email\"; Expected string, received number at \"name\""
-                        details:
-                          issues:
-                            - code: invalid_string
-                              validation: email
-                              path: ["email"]
-                              message: Invalid email
-                            - code: invalid_type
-                              expected: string
-                              received: number
-                              path: ["name"]
-                              message: Expected string, received number
-                          name: ZodError
+                    error:
+                      message: 'Validation error: Invalid email at "email"; Expected string, received number at "name"'
+                      details:
+                        issues:
+                          - code: invalid_string
+                            validation: email
+                            path: ["email"]
+                            message: Invalid email
+                          - code: invalid_type
+                            expected: string
+                            received: number
+                            path: ["name"]
+                            message: Expected string, received number
+                        name: ZodError
 
                 Estudante Já Existe:
                   value:
@@ -450,6 +496,7 @@ components:
             "USER": Permissões de usuário
 
   schemas:
+    # Models
     StudentData:
       description: |
         Dados de um estudante.
@@ -480,16 +527,51 @@ components:
           format: date-time
           description: Data de atualização do estudante
 
+    UserData:
+      description: |
+        Dados de um Usuário.
+      type: object
+      properties:
+        id:
+          type: string
+          format: cuid
+          description: ID do usuário
+        name:
+          type: string
+          description: Nome do usuário
+        email:
+          type: string
+          format: email
+          description: E-mail do usuário
+        studentId:
+          type: string
+          format: studentId
+          pattern: ^\d{5}.{2,6}\d{4}$
+          nullable: true
+          description: Matrícula do estudante, caso o usuário seja um estudante
+        role:
+          $ref: "#/components/schemas/Role"
+        createdAt:
+          type: string
+          format: date-time
+          description: Data de criação do usuário
+        updatedAt:
+          type: string
+          format: date-time
+          description: Data de atualização do usuário
+
     Role:
       description: |
         Tipos de usuário na aplicação. Cada usuário possui permissões diferentes.
       type: string
       enum:
-        - "ADMIN"
         - "VERIFIER"
-        - "USER"
+        - "ADMIN"
+        - "STUDENT"
+      default: "VERIFIER"
 
-    ZodInvalidValueTypeIssue:
+    # Errors
+    Tipo de Dado Inválido:
       type: object
       properties:
         code:
@@ -510,7 +592,7 @@ components:
           description: Mensagem de erro do Zod
           type: string
 
-    ZodInvalidValue:
+    Valor Inválido:
       type: object
       properties:
         code:
@@ -532,6 +614,7 @@ components:
           description: Mensagem de erro do Zod
           type: string
 
+    # HTTP Response Errors
     Erro de Validação:
       type: object
       properties:
@@ -550,11 +633,26 @@ components:
                   description: Lista de erros
                   items:
                     anyOf:
-                      - $ref: "#/components/schemas/ZodInvalidValueTypeIssue"
-                      - $ref: "#/components/schemas/ZodInvalidValue"
+                      - $ref: "#/components/schemas/Tipo de Dado Inválido"
+                      - $ref: "#/components/schemas/Valor Inválido"
                 name:
                   type: string
                   enum: [ZodError]
+      example:
+        error:
+          message: 'Validation error: Invalid email at "email"; Expected string, received number at "name"'
+          details:
+            issues:
+              - code: invalid_string
+                validation: email
+                path: ["email"]
+                message: Invalid email
+              - code: invalid_type
+                expected: string
+                received: number
+                path: ["name"]
+                message: Expected string, received number
+            name: ZodError
 
     Usuário Já Existe:
       type: object
@@ -577,6 +675,23 @@ components:
               type: string
               description: Mensagem de erro
               enum: [Student already exists in database!]
+
+    UnauthorizedError:
+      description: Token de acesso não informado ou inválido.
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+              enum:
+                - Missing authorization header
+                - Invalid token
+      example:
+        error:
+          message: Missing authorization header
 
   parameters:
     userEmail:
@@ -663,6 +778,7 @@ components:
             picUrl: https://picsum.photos/200
 
   responses:
+    # Success Responses (2xx)
     UserData:
       description: Dados do usuário
       content:
@@ -725,53 +841,40 @@ components:
     NoContent:
       description: Sucesso. Sem conteúdo.
 
+    # Error Responses - Client Errors (4xx)
+    ## 400
     BadRequestValidation:
       description: Requisição inválida. Erro de validação.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Erro de Validação'
+            $ref: "#/components/schemas/Erro de Validação"
 
           examples:
             Erro de Validação de Dados:
               value:
-                  error:
-                    message: "Validation error: Invalid email at \"email\"; Expected string, received number at \"name\""
-                    details:
-                      issues:
-                        - code: invalid_string
-                          validation: email
-                          path: ["email"]
-                          message: Invalid email
-                        - code: invalid_type
-                          expected: string
-                          received: number
-                          path: ["name"]
-                          message: Expected string, received number
-                      name: ZodError
+                error:
+                  message: 'Validation error: Invalid email at "email"; Expected string, received number at "name"'
+                  details:
+                    issues:
+                      - code: invalid_string
+                        validation: email
+                        path: ["email"]
+                        message: Invalid email
+                      - code: invalid_type
+                        expected: string
+                        received: number
+                        path: ["name"]
+                        message: Expected string, received number
+                    name: ZodError
 
-    NotFound:
-      description: Não econtrado
-
-    InternalServerError:
-      description: Erro interno do servidor
-
-    ForbiddenError:
-      description: Acesso negado. O usuário não tem permissão para realizar esta ação.
-
+    ## 401
     UnauthorizedError:
       description: Token de acesso não informado ou inválido.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    description: Mensagem de erro
+            $ref: "#/components/schemas/UnauthorizedError"
           examples:
             Token não informado:
               value:
@@ -781,3 +884,37 @@ components:
               value:
                 error:
                   message: Invalid access token
+
+    ## 403
+    ForbiddenError:
+      description: Acesso negado. O usuário não tem permissão para realizar esta ação.
+      content:
+        plain/text:
+          schema:
+            type: string
+            description: Mensagem de erro
+            default: Forbidden
+          example: Forbidden
+
+    ## 404
+    NotFound:
+      description: Não econtrado
+      content:
+        text/plain:
+          schema:
+            type: string
+            description: Mensagem de erro
+            default: Not Found
+          example: Not Found
+
+    # Error Responses - Server Errors (5xx)
+    ## 500
+    InternalServerError:
+      description: Erro interno do servidor
+      content:
+        text/plain:
+          schema:
+            type: string
+            description: Mensagem de erro
+            default: Internal Server Error
+          example: Internal Server Error
