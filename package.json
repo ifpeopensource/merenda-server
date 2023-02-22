@@ -19,6 +19,9 @@
     "#infra/*": "./src/infra/*",
     "#utils/*": "./src/utils/*"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "private": true,
   "license": "MIT",
   "dependencies": {

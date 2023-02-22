@@ -62,12 +62,31 @@ tags:
     x-displayName: 400 Bad Request (Erro de validação)
     description: |
       Requisição inválida. Erro de validação dos dados enviados.
+
+      > ⚠️ **Atenção**:
+      >
+      >O erro 400 pode ser retornado por outros motivos, dependendo do endpoint.
       <SchemaDefinition schemaRef="#/components/schemas/Erro de Validação" />
   - name: unauthorized
     x-displayName: 401 Unauthorized
     description: |
       Token de acesso não informado ou inválido.
       <SchemaDefinition schemaRef="#/components/schemas/UnauthorizedError" />
+  - name: forbidden
+    x-displayName: 403 Forbidden
+    description: |
+      Usuário não tem permissão para acessar o recurso.
+      <SchemaDefinition schemaRef="#/components/schemas/ForbiddenError" />
+  - name: not_found
+    x-displayName: 404 Not Found
+    description: |
+      Recurso não encontrado.
+      <SchemaDefinition schemaRef="#/components/schemas/NotFoundError" />
+  - name: internal_server_error
+    x-displayName: 500 Internal Server Error
+    description: |
+      Erro interno do servidor.
+      <SchemaDefinition schemaRef="#/components/schemas/InternalServerError" />
 
 x-tagGroups:
   - name: Operações
@@ -85,6 +104,9 @@ x-tagGroups:
     tags:
       - bad_request
       - unauthorized
+      - forbidden
+      - not_found
+      - internal_server_error
 
 paths:
   # Users
@@ -615,6 +637,7 @@ components:
           type: string
 
     # HTTP Response Errors
+    # 400
     Erro de Validação:
       type: object
       properties:
@@ -676,6 +699,7 @@ components:
               description: Mensagem de erro
               enum: [Student already exists in database!]
 
+    #401
     UnauthorizedError:
       description: Token de acesso não informado ou inválido.
       type: object
@@ -692,6 +716,60 @@ components:
       example:
         error:
           message: Missing authorization header
+
+    # 403
+    ForbiddenError:
+      description: Usuário não tem permissão para acessar o recurso.
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+              enum:
+                - Forbidden
+              default: Forbidden
+      example:
+        error:
+          message: Forbidden
+
+    # 404
+    NotFoundError:
+      description: Recurso não encontrado.
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+              enum:
+                - Not Found
+              default: Not Found
+      example:
+        error:
+          message: Not Found
+
+    # 500
+    InternalServerError:
+      description: Erro interno do servidor.
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Mensagem de erro
+              enum:
+                - Internal Server Error
+              default: Internal Server Error
+      example:
+        error:
+          message: Internal Server Error
 
   parameters:
     userEmail:
@@ -889,32 +967,32 @@ components:
     ForbiddenError:
       description: Acesso negado. O usuário não tem permissão para realizar esta ação.
       content:
-        plain/text:
+        application/json:
           schema:
-            type: string
-            description: Mensagem de erro
-            default: Forbidden
-          example: Forbidden
+            $ref: "#/components/schemas/ForbiddenError"
+          example:
+            error:
+              message: Forbidden
 
     ## 404
     NotFound:
       description: Não econtrado
       content:
-        text/plain:
+        application/json:
           schema:
-            type: string
-            description: Mensagem de erro
-            default: Not Found
-          example: Not Found
+            $ref: "#/components/schemas/NotFoundError"
+          example:
+            error:
+              message: Not Found
 
     # Error Responses - Server Errors (5xx)
     ## 500
     InternalServerError:
       description: Erro interno do servidor
       content:
-        text/plain:
+        application/json:
           schema:
-            type: string
-            description: Mensagem de erro
-            default: Internal Server Error
-          example: Internal Server Error
+            $ref: "#/components/schemas/InternalServerError"
+          example:
+            error:
+              message: Internal Server Error
