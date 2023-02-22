@@ -4,6 +4,7 @@ import { EntryExists } from '../errors/EntryExists.js';
 
 import StudentService from '../services/StudentService.js';
 
+import { sendStudentQRCodeEmail } from '../infra/email/messages/sendStudentQRCodeEmail.js';
 import generateFormattedError from '../utils/generateFormattedError.js';
 
 async function list(request, response) {
@@ -43,6 +44,7 @@ async function add(request, response) {
 
   try {
     const student = await StudentService.add(data);
+    sendStudentQRCodeEmail(student);
     return response.status(201).json(student);
   } catch (error) {
     if (error instanceof EntryExists) {
