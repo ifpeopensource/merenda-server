@@ -8,7 +8,10 @@ import oauthRoutes from './routes/oauth.js';
 import studentsRoutes from './routes/students.js';
 import usersRoutes from './routes/users.js';
 
+import { formattedSendStatus } from './utils/sendStatusJSONFormatter.js';
+
 const app = express();
+app.response.sendStatus = formattedSendStatus;
 
 app.use(cors());
 app.use(express.json());
