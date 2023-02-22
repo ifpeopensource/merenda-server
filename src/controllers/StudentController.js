@@ -45,7 +45,6 @@ async function add(request, response) {
   try {
     const student = await StudentService.add(data);
     sendStudentQRCodeEmail(student);
-
     return response.status(201).json(student);
   } catch (error) {
     if (error instanceof EntryExists) {
