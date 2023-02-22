@@ -10,6 +10,9 @@
     "start": "node src/server.js",
     "lint": "eslint src --fix"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "private": true,
   "license": "MIT",
   "dependencies": {
