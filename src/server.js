@@ -8,10 +8,14 @@ import oauthRoutes from './routes/oauth.js';
 import studentsRoutes from './routes/students.js';
 import usersRoutes from './routes/users.js';
 
+import { setSendStatusFormat } from './utils/sendStatusJSONFormatter.js';
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+setSendStatusFormat(app);
 
 app.use(oauthRoutes);
 app.use(studentsRoutes);
