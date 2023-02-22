@@ -35,9 +35,8 @@ async function login(request, response) {
     if (error instanceof InvalidPassword) {
       return response.status(401).json({ error: { message: error.message } });
     }
-    return response
-      .status(500)
-      .json({ error: { message: error.message, details: error } });
+    console.error('Internal Server Error: ' + error);
+    return response.sendStatus(500);
   }
 }
 
