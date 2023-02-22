@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises';
 
-import mailing from './nodemailer.js';
+import mailing from '../nodemailer.js';
 
 import { generateStudentQRCode } from '../../../utils/generateStudentQRCode.js';
 
