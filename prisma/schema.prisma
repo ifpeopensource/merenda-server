@@ -58,6 +58,7 @@ model StudentInMealSession {
   studentId String
   servedAt  DateTime    @default(now())
 
+  @@unique([sessionId, studentId])
   @@map("students_in_meal_sessions")
 }
 

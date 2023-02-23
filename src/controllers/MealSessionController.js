@@ -110,10 +110,10 @@ async function verifyStudent(request, response) {
     return response.status(400).json(generateFormattedError(error));
   }
 
-  let session;
+  let studentInMealSession;
 
   try {
-    session = await MealSessionService.verify(data);
+    studentInMealSession = await MealSessionService.verify(data);
   } catch (error) {
     if (error instanceof SessionClosedError) {
       return response
@@ -125,21 +125,14 @@ async function verifyStudent(request, response) {
     }
   }
 
-  if (!session) {
-    return response.sendStatus(404);
+  if (!studentInMealSession) {
+    return response.json({ available: true });
   }
 
-  let available = true;
-  let servedAt;
-
-  session.students.forEach((student) => {
-    if (student.studentId == data.studentId) {
-      available = false;
-      servedAt = student.servedAt;
-    }
+  return response.json({
+    available: false,
+    servedAt: studentInMealSession.servedAt,
   });
-
-  return response.json({ available, servedAt });
 }
 
 export default { addStudent, startSession, closeSession, verifyStudent };

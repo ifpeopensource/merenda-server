@@ -7,25 +7,22 @@ const PRISMA_ERRORS = {
 };
 
 async function verify(data) {
-  const session = await prisma.mealSession.findUnique({
-    where: {
-      id: data.sessionId,
-    },
-    select: {
-      students: {
+  const studentInMealSession = await prisma.studentInMealSession.findFirst({
+    where: data,
+    include: {
+      session: {
         select: {
-          studentId: true,
-          servedAt: true,
+          closedAt: true,
         },
       },
     },
   });
 
-  if (session && session.closedAt) {
+  if (studentInMealSession && studentInMealSession.session.closedAt) {
     throw new SessionClosedError();
   }
 
-  return session;
+  return studentInMealSession;
 }
 
 async function read(sessionId) {
