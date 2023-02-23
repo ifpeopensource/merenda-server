@@ -8,7 +8,7 @@ import { sendStudentQRCodeEmail } from '#infra/email/messages/sendStudentQRCodeE
 
 import generateFormattedError from '#utils/generateFormattedError.js';
 
-async function list(request, response) {
+async function list(_request, response) {
   try {
     const students = await StudentService.findAll();
     return response.json(students);
