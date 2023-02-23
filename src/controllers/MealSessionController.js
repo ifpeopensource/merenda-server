@@ -131,9 +131,8 @@ async function verifyStudent(request, response) {
 
   let available = true;
   let servedAt;
-  console.log(session);
+
   session.students.forEach((student) => {
-    console.log(student);
     if (student.studentId == data.studentId) {
       available = false;
       servedAt = student.servedAt;
