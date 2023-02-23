@@ -3,7 +3,7 @@ import { z } from 'zod';
 import OauthService from '#services/OauthService.js';
 import UserService from '#services/UserService.js';
 
-import { InvalidPassword } from '#errors/InvalidPassword.js';
+import { InvalidPasswordError } from '#errors/InvalidPassword.js';
 
 import generateFormattedError from '#utils/generateFormattedError.js';
 
@@ -32,7 +32,7 @@ async function login(request, response) {
       .set({ 'Cache-Control': 'no-store' })
       .json({ access_token: token, token_type: 'Bearer' });
   } catch (error) {
-    if (error instanceof InvalidPassword) {
+    if (error instanceof InvalidPasswordError) {
       return response.status(401).json({ error: { message: error.message } });
     }
     console.error('Internal Server Error: ' + error);

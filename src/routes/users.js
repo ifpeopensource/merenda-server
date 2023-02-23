@@ -7,8 +7,8 @@ import UserController from '#controllers/UserController.js';
 
 const routes = express.Router();
 
-routes.use(AuthMiddleware);
-routes.use(RequireAdminMiddleware);
+routes.use('/users', AuthMiddleware);
+routes.use('/users', RequireAdminMiddleware);
 
 routes.post('/users', UserController.add);
 

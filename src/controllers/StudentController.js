@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import StudentService from '#services/StudentService.js';
 
-import { EntryExists } from '#errors/EntryExists.js';
+import { EntryExistsError } from '#errors/EntryExists.js';
 
 import { sendStudentQRCodeEmail } from '#infra/email/messages/sendStudentQRCodeEmail.js';
 
@@ -48,7 +48,7 @@ async function add(request, response) {
     sendStudentQRCodeEmail(student);
     return response.status(201).json(student);
   } catch (error) {
-    if (error instanceof EntryExists) {
+    if (error instanceof EntryExistsError) {
       return response.status(400).json({ error: { message: error.message } });
     } else {
       console.error('Internal Server Error: ' + error);
