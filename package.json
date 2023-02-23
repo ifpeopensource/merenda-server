@@ -8,7 +8,9 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "lint": "eslint src --fix"
+    "lint": "eslint src --fix",
+    "prisma:generate": "prisma generate",
+    "prisma:generate:no-erd": "prisma generate --generator client"
   },
   "imports": {
     "#routes/*": "./src/routes/*",
@@ -40,12 +42,14 @@
     "zod-validation-error": "^0.3.1"
   },
   "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^9.4.0",
     "eslint": "^8.34.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.4",
-    "prisma": "^4.10.1"
+    "prisma": "^4.10.1",
+    "prisma-erd-generator": "^1.2.5"
   }
 }

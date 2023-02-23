@@ -2,42 +2,46 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Student {
-    id        String   @id
-    name      String
-    email     String   @unique
-    picUrl    String
-    user      User?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id
+  name      String
+  email     String   @unique
+  picUrl    String
+  user      User?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@map("students")
+  @@map("students")
 }
 
 model User {
-    id        String   @id @default(cuid())
-    name      String
-    password  String
-    student   Student? @relation(fields: [studentId], references: [id])
-    studentId String?  @unique
-    email     String   @unique
-    role      Role     @default(VERIFIER)
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  password  String
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?  @unique
+  email     String   @unique
+  role      Role     @default(VERIFIER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@map("users")
+  @@map("users")
 }
 
 enum Role {
-    STUDENT
-    VERIFIER
-    ADMIN
+  STUDENT
+  VERIFIER
+  ADMIN
 }
