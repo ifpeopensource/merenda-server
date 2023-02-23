@@ -15,50 +15,50 @@ datasource db {
 }
 
 model Student {
-    id        String                 @id
-    name      String
-    email     String                 @unique
-    picUrl    String
-    user      User?
-    mealLog   StudentInMealSession[]
-    createdAt DateTime               @default(now())
-    updatedAt DateTime               @updatedAt
+  id        String                 @id
+  name      String
+  email     String                 @unique
+  picUrl    String
+  user      User?
+  mealLog   StudentInMealSession[]
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
 
-    @@map("students")
+  @@map("students")
 }
 
 model User {
-    id           String        @id @default(cuid())
-    name         String
-    password     String
-    student      Student?      @relation(fields: [studentId], references: [id])
-    studentId    String?       @unique
-    email        String        @unique
-    role         Role          @default(VERIFIER)
-    createdAt    DateTime      @default(now())
-    updatedAt    DateTime      @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  password  String
+  student   Student? @relation(fields: [studentId], references: [id])
+  studentId String?  @unique
+  email     String   @unique
+  role      Role     @default(VERIFIER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    @@map("users")
+  @@map("users")
 }
 
 model MealSession {
-    id        String                 @id @default(cuid())
-    students  StudentInMealSession[]
-    startedAt DateTime               @default(now())
-    closedAt  DateTime?
+  id        String                 @id @default(cuid())
+  students  StudentInMealSession[]
+  startedAt DateTime               @default(now())
+  closedAt  DateTime?
 
-    @@map("meal_sessions")
+  @@map("meal_sessions")
 }
 
 model StudentInMealSession {
-    id        String      @id @default(cuid())
-    session   MealSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-    sessionId String
-    student   Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
-    studentId String
-    servedAt  DateTime    @default(now())
+  id        String      @id @default(cuid())
+  session   MealSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String
+  student   Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+  servedAt  DateTime    @default(now())
 
-    @@map("students_in_meal_sessions")
+  @@map("students_in_meal_sessions")
 }
 
 enum Role {
