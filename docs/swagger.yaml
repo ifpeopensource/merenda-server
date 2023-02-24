@@ -41,6 +41,13 @@ tags:
     description: Operações relacionadas a estudantes
 
   # Models
+  - name: erd
+    x-displayName: Diagrama Entidade Relacionamento
+    description: |
+      <details>
+        <summary>Diagrama Entidade Relacionamento do banco de dados da aplicação</summary>
+        <img src="./assets/ERD.svg" alt="Diagrama Entidade Relacionamento dos Dados" />
+      </details>
   - name: roles
     x-displayName: Tipos de Usuário
     description: |
@@ -96,6 +103,7 @@ x-tagGroups:
 
   - name: Models
     tags:
+      - erd
       - roles
       - user_data_model
       - student_data_model
