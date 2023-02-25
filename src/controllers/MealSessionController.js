@@ -24,7 +24,7 @@ async function status(request, response) {
     return response.json(await MealSessionService.read(id));
   } catch (error) {
     if (error instanceof MealSessionNotFoundError) {
-      return response.status(404).json({ error: { message: error.message } });
+      return response.sendStatus(404);
     }
 
     console.error('Internal Server Error: ' + error);
@@ -56,7 +56,7 @@ async function restart(request, response) {
     return response.json(await MealSessionService.restart(id));
   } catch (error) {
     if (error instanceof MealSessionNotFoundError) {
-      return response.status(404).json({ error: { message: error.message } });
+      return response.sendStatus(404);
     }
 
     console.error('Internal Server Error: ' + error);
@@ -133,7 +133,7 @@ async function addStudent(request, response) {
     }
 
     if (error instanceof MealSessionFinishedError) {
-      return response.status(404).json({
+      return response.status(400).json({
         error: { message: error.message, details: 'meal_session_finished' },
       });
     }
