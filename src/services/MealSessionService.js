@@ -60,6 +60,9 @@ async function addStudent(data) {
         mealSessionId: data.mealSessionId,
         studentId: data.studentId,
       },
+      include: {
+        student: true,
+      },
     });
   } catch (error) {
     if (error.code === PRISMA_ERRORS.foreignKeyConstraint) {
