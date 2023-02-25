@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-import { InvalidPasswordError } from '#errors/InvalidPassword.js';
+import { InvalidPasswordError } from '#errors/oAuth/InvalidPassword.js';
 
 async function createToken(password, user) {
   if (!(await bcrypt.compare(password, user.password))) {

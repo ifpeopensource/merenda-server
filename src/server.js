@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import express from 'express';
 
-import mealsRoutes from '#routes/meals.js';
+import mealSessionsRoutes from '#routes/mealSessions.js';
 import oauthRoutes from '#routes/oauth.js';
 import studentsRoutes from '#routes/students.js';
 import usersRoutes from '#routes/users.js';
@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(oauthRoutes);
 app.use(studentsRoutes);
 app.use(usersRoutes);
-app.use(mealsRoutes);
+app.use(mealSessionsRoutes);
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');

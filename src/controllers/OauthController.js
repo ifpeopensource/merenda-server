@@ -3,7 +3,7 @@ import { z } from 'zod';
 import OauthService from '#services/OauthService.js';
 import UserService from '#services/UserService.js';
 
-import { InvalidPasswordError } from '#errors/InvalidPassword.js';
+import { InvalidPasswordError } from '#errors/oAuth/InvalidPassword.js';
 
 import generateFormattedError from '#utils/generateFormattedError.js';
 
