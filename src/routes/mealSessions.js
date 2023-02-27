@@ -21,6 +21,14 @@ routes.patch(
 
 routes.patch('/meal-sessions/:mealSessionId', MealSessionController.finish);
 
-routes.post('/meal-sessions/:mealSessionId', MealSessionController.addStudent);
+routes.get(
+  '/meal-sessions/:mealSessionId/student/status',
+  MealSessionController.verifyStudentInMealSession
+);
+
+routes.post(
+  '/meal-sessions/:mealSessionId/student/add',
+  MealSessionController.addStudent
+);
 
 export default routes;

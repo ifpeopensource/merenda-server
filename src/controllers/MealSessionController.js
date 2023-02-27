@@ -152,4 +152,68 @@ async function addStudent(request, response) {
   }
 }
 
-export default { status, start, restart, finish, addStudent };
+async function verifyStudentInMealSession(request, response) {
+  const mealSessionIdSchema = z.string().cuid('Invalid Session Format!');
+  const studentIdSchema = z
+    .string()
+    .min(12)
+    .regex(/\d{5}.{2,5}\d{4}/g, 'Invalid ID Format!')
+    .transform((val) => val.toUpperCase());
+
+  const mealSessionId = request.params.mealSessionId;
+  const studentId = request.query.studentId;
+
+  const dataSchema = z.object({
+    mealSessionId: mealSessionIdSchema,
+    studentId: studentIdSchema,
+  });
+
+  let data;
+
+  try {
+    data = dataSchema.parse({ mealSessionId, studentId });
+  } catch (error) {
+    return response.status(400).json(generateFormattedError(error));
+  }
+
+  let studentInMealSession;
+
+  try {
+    studentInMealSession = await MealSessionService.verifyStudentInMealSession(
+      data
+    );
+  } catch (error) {
+    if (error instanceof StudentNotFoundError) {
+      return response.status(404).json({
+        error: { message: error.message, details: 'student_not_found' },
+      });
+    }
+
+    if (error instanceof MealSessionNotFoundError) {
+      return response.status(404).json({
+        error: { message: error.message, details: 'meal_session_not_found' },
+      });
+    }
+
+    console.error('Internal Server Error: ' + error);
+    return response.sendStatus(500);
+  }
+
+  if (!studentInMealSession) {
+    return response.json({ available: true });
+  }
+
+  return response.json({
+    available: false,
+    servedAt: studentInMealSession.servedAt,
+  });
+}
+
+export default {
+  status,
+  start,
+  restart,
+  finish,
+  addStudent,
+  verifyStudentInMealSession,
+};

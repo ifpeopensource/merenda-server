@@ -90,4 +90,32 @@ async function read(sessionId) {
   return mealSession;
 }
 
-export default { start, finish, restart, addStudent, read };
+async function verifyStudentInMealSession(data) {
+  const mealSession = await prisma.mealSession.findUnique({
+    where: { id: data.mealSessionId },
+  });
+
+  if (!mealSession) throw new MealSessionNotFoundError();
+
+  const student = await prisma.studentInMealSession.findUnique({
+    where: {
+      mealSessionId_studentId: {
+        mealSessionId: data.mealSessionId,
+        studentId: data.studentId,
+      },
+    },
+  });
+
+  if (!student) throw new StudentNotFoundError();
+
+  return student;
+}
+
+export default {
+  start,
+  finish,
+  restart,
+  addStudent,
+  read,
+  verifyStudentInMealSession,
+};
