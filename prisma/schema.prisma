@@ -15,13 +15,14 @@ datasource db {
 }
 
 model Student {
-  id        String   @id
-  name      String
-  email     String   @unique
-  picUrl    String
-  user      User?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String                 @id
+  name         String
+  email        String                 @unique
+  picUrl       String
+  user         User?
+  mealSessions StudentInMealSession[]
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
 
   @@map("students")
 }
@@ -38,6 +39,27 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@map("users")
+}
+
+model MealSession {
+  id         String                 @id @default(cuid())
+  students   StudentInMealSession[]
+  startedAt  DateTime               @default(now())
+  finishedAt DateTime?
+
+  @@map("meal_sessions")
+}
+
+model StudentInMealSession {
+  id            String      @id @default(cuid())
+  mealSession   MealSession @relation(fields: [mealSessionId], references: [id], onDelete: Cascade)
+  mealSessionId String
+  student       Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId     String
+  servedAt      DateTime    @default(now())
+
+  @@unique([mealSessionId, studentId])
+  @@map("students_in_meal_sessions")
 }
 
 enum Role {

@@ -1,4 +1,4 @@
-import { EntryExists } from '#errors/EntryExists.js';
+import { EntryExistsError } from '#errors/EntryExists.js';
 import { prisma } from '../PrismaClient.js';
 
 const PRISMA_ERRORS = {
@@ -24,7 +24,7 @@ async function add(data) {
     });
   } catch (error) {
     if (error.code == PRISMA_ERRORS.alreadyExists) {
-      throw new EntryExists();
+      throw new EntryExistsError();
     } else {
       throw error;
     }
