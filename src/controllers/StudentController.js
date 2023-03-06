@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 import StudentService from '#services/StudentService.js';
 
-import { EntryExists } from '#errors/EntryExists.js';
+import { EntryExistsError } from '#errors/EntryExists.js';
 
 import { sendStudentQRCodeEmail } from '#infra/email/messages/sendStudentQRCodeEmail.js';
 
 import generateFormattedError from '#utils/generateFormattedError.js';
 
-async function list(request, response) {
+async function list(_request, response) {
   try {
     const students = await StudentService.findAll();
     return response.json(students);
@@ -48,7 +48,7 @@ async function add(request, response) {
     sendStudentQRCodeEmail(student);
     return response.status(201).json(student);
   } catch (error) {
-    if (error instanceof EntryExists) {
+    if (error instanceof EntryExistsError) {
       return response.status(400).json({ error: { message: error.message } });
     } else {
       console.error('Internal Server Error: ' + error);

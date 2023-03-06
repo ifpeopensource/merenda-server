@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import UserService from '#services/UserService.js';
 
-import { EntryExists } from '#errors/EntryExists.js';
+import { EntryExistsError } from '#errors/EntryExists.js';
 
 import generateFormattedError from '#utils/generateFormattedError.js';
 
@@ -36,7 +36,7 @@ async function add(request, response) {
     const user = await UserService.add(data);
     return response.status(201).json(user);
   } catch (error) {
-    if (error instanceof EntryExists) {
+    if (error instanceof EntryExistsError) {
       return response.status(400).json({ error: { message: error.message } });
     } else {
       console.error('Internal Server Error: ' + error);

@@ -8,7 +8,7 @@ import StudentController from '#controllers/StudentController.js';
 
 const routes = express.Router();
 
-routes.use(AuthMiddleware);
+routes.use('/students', AuthMiddleware);
 
 routes.get(
   '/students/find-by-email',

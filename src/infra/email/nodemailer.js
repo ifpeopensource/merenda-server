@@ -12,7 +12,7 @@ const HANDLEBARS_OPTIONS = {
     extName: '.handlebars',
     defaultLayout: false,
   },
-  viewPath: path.resolve(__dirname, '..', 'views'),
+  viewPath: path.resolve(__dirname, 'views'),
   extName: '.handlebars',
 };
 
@@ -33,7 +33,6 @@ async function sendEmail(message) {
   transporter.sendMail(message, (error) => {
     if (error) {
       console.error('Could not send email to user, error: ', error);
-      throw error;
     }
   });
 }

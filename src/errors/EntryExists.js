@@ -1,7 +1,7 @@
-export class EntryExists extends Error {
+export class EntryExistsError extends Error {
   static message = 'User already exists in database!';
 
   constructor() {
-    super(EntryExists.message);
+    super(EntryExistsError.message);
   }
 }
