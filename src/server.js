@@ -2,6 +2,7 @@
 import dotenv from 'dotenv';
 
 // eslint-disable-next-line import/order
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 
@@ -17,6 +18,7 @@ app.response.sendStatus = formattedSendStatus;
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(oauthRoutes);
 app.use(studentsRoutes);

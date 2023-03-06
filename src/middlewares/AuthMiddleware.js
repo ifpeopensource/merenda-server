@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 
 function AuthMiddleware(request, response, next) {
-  const authHeader = request.headers.authorization;
+  const authHeader =
+    request.cookies['access-token'] || request.headers.authorization;
 
   if (!authHeader) {
     return response
