@@ -28,8 +28,14 @@ async function login(request, response) {
 
   try {
     const token = await OauthService.createToken(password, user);
+
     return response
       .set({ 'Cache-Control': 'no-store' })
+      .cookie('access-token', 'Bearer ' + token, {
+        httpOnly: true,
+        sameSite: 'Strict',
+        secure: process.env.NODE_ENV === 'production',
+      })
       .json({ access_token: token, token_type: 'Bearer' });
   } catch (error) {
     if (error instanceof InvalidPasswordError) {
@@ -40,4 +46,18 @@ async function login(request, response) {
   }
 }
 
-export default { login };
+async function logout(_request, response) {
+  response
+    .clearCookie('access-token', {
+      httpOnly: true,
+      sameSite: true,
+      secure: process.env.NODE_ENV === 'production',
+    })
+    .json({ success: { message: 'You logged out successfully!' } });
+}
+
+async function verify(_request, response) {
+  response.json({ success: { message: 'You are logged in!' } });
+}
+
+export default { login, logout, verify };
