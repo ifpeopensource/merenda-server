@@ -17,7 +17,7 @@ dotenv.config();
 const app = express();
 app.response.sendStatus = formattedSendStatus;
 
-app.use(cors());
+app.use(cors({ crendentials: true, origin: process.env.WEBAPP_HOST }));
 app.use(express.json());
 app.use(cookieParser());
 
