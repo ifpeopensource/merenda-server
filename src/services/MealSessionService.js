@@ -111,6 +111,14 @@ async function verifyStudentInMealSession(data) {
   return student;
 }
 
+async function list() {
+  return await prisma.mealSession.findMany({
+    where: {
+      finishedAt: null,
+    },
+  });
+}
+
 export default {
   start,
   finish,
@@ -118,4 +126,5 @@ export default {
   addStudent,
   read,
   verifyStudentInMealSession,
+  list,
 };

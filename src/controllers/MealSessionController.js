@@ -209,6 +209,15 @@ async function verifyStudentInMealSession(request, response) {
   });
 }
 
+async function list(_request, response) {
+  try {
+    return response.json(await MealSessionService.list());
+  } catch (error) {
+    console.error('Internal Server Error: ' + error);
+    return response.sendStatus(500);
+  }
+}
+
 export default {
   status,
   start,
@@ -216,4 +225,5 @@ export default {
   finish,
   addStudent,
   verifyStudentInMealSession,
+  list,
 };
