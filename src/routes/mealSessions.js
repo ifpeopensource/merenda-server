@@ -10,6 +10,8 @@ const routes = express.Router();
 routes.use('/meal-sessions', AuthMiddleware);
 routes.use('/meal-sessions', RequireVerifierMiddleware);
 
+routes.get('/meal-sessions', MealSessionController.list);
+
 routes.get('/meal-sessions/:mealSessionId', MealSessionController.status);
 
 routes.post('/meal-sessions', MealSessionController.start);
