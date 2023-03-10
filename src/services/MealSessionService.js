@@ -104,6 +104,9 @@ async function verifyStudentInMealSession(data) {
         studentId: data.studentId,
       },
     },
+    include: {
+      student: true,
+    },
   });
 
   if (!student) throw new StudentNotFoundError();

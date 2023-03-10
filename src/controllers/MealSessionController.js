@@ -139,11 +139,16 @@ async function addStudent(request, response) {
     }
 
     if (error instanceof StudentAlreadyInMealSessionError) {
+      const studentInMealSession =
+        await MealSessionService.verifyStudentInMealSession(data);
+
       return response.status(400).json({
         error: {
           message: error.message,
           details: 'student_already_in_meal_session',
         },
+        student: studentInMealSession.student,
+        servedAt: studentInMealSession.servedAt,
       });
     }
 
