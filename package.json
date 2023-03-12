@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "start:migrate:prod": "prisma migrate deploy && node src/server.js",
     "lint": "eslint src --fix",
     "prisma:generate": "prisma generate",
     "prisma:generate:no-erd": "prisma generate --generator client"

@@ -1,0 +1,26 @@
+.git/
+node_modules/
+
+# Environment files
+.env
+.env.local
+
+# Documentation files
+docs/
+
+# CI files
+.github/
+
+# Linting files
+.eslintignore
+.eslintrc.json
+.prettierrc
+.prettierignore
+
+# Editor files
+.vscode/
+.editorconfig
+
+# Repository files
+README.md
+LICENSE
