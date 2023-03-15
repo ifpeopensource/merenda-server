@@ -19,8 +19,8 @@ const app = express();
 app.response.sendStatus = formattedSendStatus;
 
 const rateLimit = rateLimiter({
-  windowMs: process.env.RATE_WINDOW * 60 * 1000,
-  max: process.env.RATE_REQ_NUMBER,
+  windowMs: process.env.RATE_WINDOW_MINUTES * 60 * 1000, // x minutes * 60 secs * 1000 ms = time in ms
+  max: process.env.RATE_MAX_REQS,
   message: { error: { message: 'Too many requests, try again later!' } },
   standardHeaders: true,
   legacyHeaders: false,
@@ -36,6 +36,6 @@ app.use(studentsRoutes);
 app.use(usersRoutes);
 app.use(mealSessionsRoutes);
 
-app.listen(process.env.API_PORT, () => {
+app.listen(process.env.API_PORT || 3000, () => {
   console.log('Server is running on port', process.env.API_PORT);
 });
