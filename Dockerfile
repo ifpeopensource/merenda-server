@@ -22,6 +22,11 @@ ARG DEFAULT_ADMIN_PASSWORD
 
 ARG WEBAPP_HOST=http://localhost:5173
 
+ARG API_PORT
+
+ARG RATE_WINDOW
+ARG RATE_REQ_NUMBER
+
 # Set Environment Variables
 ENV DATABASE_URL=$DATABASE_URL
 
@@ -38,6 +43,11 @@ ENV DEFAULT_ADMIN_EMAIL=$DEFAULT_ADMIN_EMAIL
 ENV DEFAULT_ADMIN_PASSWORD=$DEFAULT_ADMIN_PASSWORD
 
 ENV WEBAPP_HOST=$WEBAPP_HOST
+
+ENV API_PORT=$API_PORT
+
+ENV RATE_WINDOW=$RATE_WINDOW
+ENV RATE_REQ_NUMBER=$RATE_REQ_NUMBER
 
 # Copy the prisma folder to avoid generating the client on every build
 COPY prisma ./prisma
@@ -63,7 +73,7 @@ RUN npm run prisma:generate:no-erd
 COPY . .
 
 # Expose server port
-EXPOSE 3000
+EXPOSE $API_PORT
 
 # Start the server and migrate the database
 CMD [ "npm", "run", "start:migrate:prod" ]
