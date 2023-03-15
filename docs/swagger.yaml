@@ -35,10 +35,13 @@ tags:
   # Operations
   - name: users
     x-displayName: Usuários
-    description: Operações relacionadas a usuários
+    description: Operações relacionadas aos usuários
   - name: students
     x-displayName: Estudantes
-    description: Operações relacionadas a estudantes
+    description: Operações relacionadas aos estudantes
+  - name: meal_sessions
+    x-displayName: Sessões de Merenda
+    description: Operações relacionadas às sessões de merenda
 
   # Models
   - name: roles
@@ -56,6 +59,11 @@ tags:
     description: |
       Dados do estudante que são retornados pela API.
       <SchemaDefinition schemaRef="#/components/schemas/StudentData" />
+  - name: meal_session_data_model
+    x-displayName: Sessão de Merenda
+    description: |
+      Dados da sessão de merenda que são retornados pela API.
+      <SchemaDefinition schemaRef="#/components/schemas/MealSessionData" />
 
   # HTTP Errors
   - name: bad_request
@@ -93,12 +101,14 @@ x-tagGroups:
     tags:
       - users
       - students
+      - meal_sessions
 
   - name: Models
     tags:
       - roles
       - user_data_model
       - student_data_model
+      - meal_session_data_model
 
   - name: Erros HTTP
     tags:
@@ -482,6 +492,7 @@ paths:
             format: email
           required: true
           description: E-mail do estudante
+          example: abcd@discente.ifpe.edu.br
 
       responses:
         "200":
@@ -498,6 +509,273 @@ paths:
 
         "404":
           $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  # Meal Sessions
+  /meal-sessions:
+    post:
+      description: Inicia uma nova sessão de merenda.
+      operationId: Iniciar Sessão de Merenda
+      tags:
+        - meal_sessions
+      security:
+        - OAuth:
+            - VERIFIER
+      responses:
+        "200":
+          $ref: "#/components/responses/MealSessionData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /meal-sessions/{id}:
+    get:
+      description: Retorna dados de uma sessão de merenda.
+      operationId: Encontrar Sessão de Merenda por ID
+      tags:
+        - meal_sessions
+      security:
+        - OAuth:
+            - VERIFIER
+      parameters:
+        - $ref: "#/components/parameters/mealSessionId"
+      responses:
+        "200":
+          $ref: "#/components/responses/MealSessionData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+    patch:
+      description: Encerra uma sessão de merenda.
+      operationId: Encerrar Sessão de Merenda
+      tags:
+        - meal_sessions
+      security:
+        - OAuth:
+            - VERIFIER
+      parameters:
+        - $ref: "#/components/parameters/mealSessionId"
+
+      responses:
+        "200":
+          $ref: "#/components/responses/MealSessionData"
+
+        "400":
+          description: Sessão já encerrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        description: Mensagem de erro
+
+              example:
+                error:
+                  message: Meal session finished!
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /meal-sessions/restart/{id}:
+    patch:
+      description: Reinicia uma sessão de merenda.
+      operationId: Reiniciar Sessão de Merenda
+      tags:
+        - meal_sessions
+      security:
+        - OAuth:
+            - VERIFIER
+      parameters:
+        - $ref: "#/components/parameters/mealSessionId"
+
+      responses:
+        "200":
+          $ref: "#/components/responses/MealSessionData"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /meal-sessions/{id}/student/add:
+    post:
+      description: Adiciona um estudante a uma sessão de merenda.
+      operationId: Adicionar Estudante à Sessão de Merenda
+      tags:
+        - meal_sessions
+      security:
+        - OAuth:
+            - VERIFIER
+      parameters:
+        - $ref: "#/components/parameters/mealSessionId"
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                studentId:
+                  type: string
+                  format: studentId
+                  pattern: ^\d{5}.{2,6}\d{4}$
+                  description: Matrícula do estudante
+
+            example:
+              studentId: "20231H61RC1234"
+
+      responses:
+        "200":
+          $ref: "#/components/responses/MealSessionData"
+
+        "400":
+          description: Estudante já está na sessão ou Erro de Validação
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    description: Estudante já está na sessão
+                    properties:
+                      error:
+                        type: object
+                        properties:
+                          message:
+                            type: string
+                            description: Mensagem de erro
+                  - $ref: "#/components/schemas/Erro de Validação"
+
+              examples:
+                Estudante já está na sessão:
+                  value:
+                    error:
+                        message: Student already in meal session!
+                Erro de validação de dados:
+                  value:
+                    error:
+                      message: 'Validation error: Invalid Student Id Format! at \"studentId\"'
+                      details:
+                        issues:
+                          - validation: regex
+                            code: invalid_string
+                            message: Invalid Student Id Format!
+                            path: ["studentId"]
+                        name: ZodError
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/MealSessionOrStudentNotFound"
+
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /meal-sessions/{id}/student/status:
+    post:
+      description: Verifica a situação do estudante na sessão de merenda.
+      operationId: Verificar Status de Estudante em Sessão de Merenda
+      tags:
+        - meal_sessions
+      security:
+        - OAuth:
+            - VERIFIER
+      parameters:
+        - $ref: "#/components/parameters/mealSessionId"
+
+        - in: query
+          name: studentId
+          schema:
+            type: string
+            format: studentId
+            pattern: ^\d{5}.{2,6}\d{4}$
+          required: true
+          description: Número de matrícula do estudante
+          example: "20231H61RC1234"
+
+      responses:
+        "200":
+          description: Status do estudante na sessão de merenda
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: boolean
+                    description: Status do estudante na sessão de merenda
+
+                  servedAt:
+                    type: string
+                    format: date-time
+                    description: Data e hora em que o estudante foi servido
+                    nullable: true
+
+              examples:
+                Merenda disponível para o estudante:
+                  value:
+                    available: true
+                    servedAt: null
+
+                Merenda indisponível para o estudante:
+                  value:
+                    available: false
+                    servedAt: "2021-08-01T15:00:00.000Z"
+
+        "400":
+          $ref: "#/components/responses/BadRequestValidation"
+
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+
+        "404":
+          $ref: "#/components/responses/MealSessionOrStudentNotFound"
 
         "500":
           $ref: "#/components/responses/InternalServerError"
@@ -581,6 +859,23 @@ components:
           type: string
           format: date-time
           description: Data de atualização do usuário
+
+    MealSessionData:
+      description: Dados da sessão
+      type: object
+      properties:
+        id:
+          type: string
+          format: cuid
+          description: ID da sessão
+        startedAt:
+          type: string
+          format: date-time
+          description: Data e hora de início da sessão
+        finishedAt:
+          type: string
+          format: date-time
+          description: Data e hora de fim da sessão
 
     Role:
       description: |
@@ -780,6 +1075,7 @@ components:
       schema:
         type: string
         format: email
+      example: example@ifpeopensource.com.br
 
     studentId:
       name: id
@@ -790,6 +1086,17 @@ components:
         format: studentId
         pattern: ^\d{5}.{2,6}\d{4}$
       required: true
+      example: "20231H61RC1234"
+
+    mealSessionId:
+      name: id
+      description: ID da sessão de merenda
+      in: path
+      schema:
+        type: string
+        format: cuid
+      required: true
+      example: "ckq7x0j0a0000j6s9j2j7q7x7"
 
   requestBodies:
     UserData:
@@ -916,6 +1223,18 @@ components:
             createdAt: 2023-02-19T21:08:59.271Z
             updatedAt: 2023-02-19T21:08:59.271Z
 
+    MealSessionData:
+      description: Dados da sessão de merenda
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MealSessionData"
+
+          example:
+            id: cjjj9q7x0000k0a6e3q7x0z0z
+            startedAt: 2020-12-01T12:00:00.000Z
+            finishedAt: null
+
     NoContent:
       description: Sucesso. Sem conteúdo.
 
@@ -984,6 +1303,36 @@ components:
           example:
             error:
               message: Not Found
+
+    MealSessionOrStudentNotFound:
+      description: Sessão de merenda ou Estudante não encontrados
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Mensagem de erro
+                  details:
+                    type: string
+                    description: Código do Erro
+
+          examples:
+            Meal session not found:
+              value:
+                error:
+                    message: Meal Session not found!
+                    details: meal_session_not_found
+
+            Student not found:
+              value:
+                error:
+                    message: Student not found!
+                    details: student_not_found
 
     # Error Responses - Server Errors (5xx)
     ## 500
