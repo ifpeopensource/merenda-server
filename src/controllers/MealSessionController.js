@@ -182,9 +182,7 @@ async function verifyStudentInMealSession(request, response) {
     return response.status(400).json(generateFormattedError(error));
   }
 
-  const student = StudentService.read(studentId);
-
-  if (!student) {
+  if (!StudentService.read(studentId)) {
     return response.status(404).json({
       error: {
         message: 'Unable to find requested student!',
