@@ -182,10 +182,10 @@ async function verifyStudentInMealSession(request, response) {
     return response.status(400).json(generateFormattedError(error));
   }
 
-  if (!StudentService.read(studentId)) {
+  if (!(await StudentService.read(studentId))) {
     return response.status(404).json({
       error: {
-        message: 'Unable to find requested student!',
+        message: 'Student not found!',
         details: 'student_not_found',
       },
     });
@@ -209,7 +209,7 @@ async function verifyStudentInMealSession(request, response) {
   }
 
   if (!studentInMealSession) {
-    return response.json({ available: true });
+    return response.json({ available: true, servedAt: null });
   }
 
   return response.json({
