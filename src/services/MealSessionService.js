@@ -97,7 +97,7 @@ async function verifyStudentInMealSession(data) {
 
   if (!mealSession) throw new MealSessionNotFoundError();
 
-  const student = await prisma.studentInMealSession.findUnique({
+  const studentInMealSession = await prisma.studentInMealSession.findUnique({
     where: {
       mealSessionId_studentId: {
         mealSessionId: data.mealSessionId,
@@ -109,9 +109,7 @@ async function verifyStudentInMealSession(data) {
     },
   });
 
-  if (!student) throw new StudentNotFoundError();
-
-  return student;
+  return studentInMealSession;
 }
 
 async function list() {

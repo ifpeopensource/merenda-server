@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import MealSessionService from '#services/MealSessionService.js';
+import StudentService from '#services/StudentService.js';
 
 import { MealSessionFinishedError } from '#errors/MealSession/MealSessionFinished.js';
 import { MealSessionNotFoundError } from '#errors/MealSession/MealSessionNotFound.js';
@@ -181,6 +182,15 @@ async function verifyStudentInMealSession(request, response) {
     return response.status(400).json(generateFormattedError(error));
   }
 
+  if (!(await StudentService.read(studentId))) {
+    return response.status(404).json({
+      error: {
+        message: 'Student not found!',
+        details: 'student_not_found',
+      },
+    });
+  }
+
   let studentInMealSession;
 
   try {
@@ -188,12 +198,6 @@ async function verifyStudentInMealSession(request, response) {
       data
     );
   } catch (error) {
-    if (error instanceof StudentNotFoundError) {
-      return response.status(404).json({
-        error: { message: error.message, details: 'student_not_found' },
-      });
-    }
-
     if (error instanceof MealSessionNotFoundError) {
       return response.status(404).json({
         error: { message: error.message, details: 'meal_session_not_found' },
@@ -205,7 +209,7 @@ async function verifyStudentInMealSession(request, response) {
   }
 
   if (!studentInMealSession) {
-    return response.json({ available: true });
+    return response.json({ available: true, servedAt: null });
   }
 
   return response.json({
